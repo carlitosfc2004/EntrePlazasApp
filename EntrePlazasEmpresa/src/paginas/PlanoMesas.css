@@ -1,0 +1,232 @@
+.plano-root {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.plano-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+    color: var(--gris-texto);
+}
+
+.plano-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.toolbar-izq h2 {
+    font-size: 22px;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.toolbar-info {
+    font-size: 13px;
+    color: var(--gris-texto);
+}
+
+.btn-nueva-mesa {
+    background: var(--acento);
+    color: white;
+    padding: 10px 20px;
+    border-radius: var(--radio);
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.btn-nueva-mesa:hover {
+    background: var(--acento-hover);
+}
+
+.plano-workspace {
+    position: relative;
+    display: flex;
+    gap: 16px;
+    flex: 1;
+}
+
+.lienzo {
+    flex: 1;
+    min-height: 600px;
+    background: var(--gris-oscuro);
+    border: 1px solid var(--gris-borde);
+    border-radius: var(--radio-lg);
+    position: relative;
+    overflow: hidden;
+    background-image:
+    radial-gradient(circle, var(--gris-borde) 1px, transparent 1px);
+    background-size: 32px 32px;
+}
+
+.mesa-bloque {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--gris-medio);
+    border: 2px solid var(--gris-borde);
+    border-radius: var(--radio);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    user-select: none;
+    gap: 4px;
+}
+
+.mesa-bloque:hover {
+    border-color: var(--acento);
+}
+
+.mesa-bloque.seleccionada {
+    border-color: var(--acento);
+    box-shadow: 0 0 0 3px var(--acento-suave);
+}
+
+.mesa-bloque.arrastrando {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+
+.mesa-etiqueta {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--blanco);
+}
+
+.mesa-capacidad {
+    font-size: 11px;
+    color: var(--gris-texto);
+}
+
+.panel-mesa {
+    width: 220px;
+    background: var(--gris-oscuro);
+    border: 1px solid var(--gris-borde);
+    border-radius: var(--radio-lg);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: fit-content;
+}
+
+.panel-mesa-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.panel-mesa-titulo {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.panel-cerrar {
+    background: transparent;
+    color: var(--gris-texto);
+    font-size: 16px;
+    padding: 4px;
+}
+
+.panel-cerrar:hover {
+    color: var(--blanco);
+}
+
+.panel-mesa-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.panel-dato {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.panel-label {
+    font-size: 12px;
+    color: var(--gris-texto);
+}
+
+.panel-valor {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.btn-eliminar {
+    background: rgba(232, 86, 42, 0.12);
+    color: var(--acento);
+    border: 1px solid rgba(232, 86, 42, 0.2);
+    padding: 10px;
+    border-radius: var(--radio);
+    font-size: 13px;
+    font-weight: 500;
+    width: 100%;
+    transition: background 0.2s;
+}
+
+.btn-eliminar:hover {
+    background: rgba(232, 86, 42, 0.2);
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-card {
+    background: var(--gris-oscuro);
+    border: 1px solid var(--gris-borde);
+    border-radius: var(--radio-lg);
+    padding: 32px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.modal-card h3 {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 24px;
+}
+
+.modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.modal-botones {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.btn-cancelar {
+    flex: 1;
+    background: var(--gris-medio);
+    color: var(--gris-texto);
+    border: 1px solid var(--gris-borde);
+    padding: 12px;
+    border-radius: var(--radio);
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.btn-cancelar:hover {
+    color: var(--blanco);
+}
+
+.modal-botones .btn-principal {
+    flex: 1;
+    margin-top: 0;
+}

@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id           Int       @id @default(autoincrement())
+  nombre       String
+  apellidos    String
+  email        String    @unique
+  passwordHash String
+  telefono     String?
+  rol          Rol       @default(CLIENTE)
+  createdAt    DateTime  @default(now())
+  negocios     Negocio[]
+  reservas     Reserva[]
+}
+
+enum Rol {
+  CLIENTE
+  HOSTELERO
+}
+
+model Negocio {
+  id               Int       @id @default(autoincrement())
+  propietarioId    Int
+  propietario      Usuario   @relation(fields: [propietarioId], references: [id])
+  nombre           String
+  descripcion      String?
+  direccion        String?
+  ciudad           String?
+  telefono         String?
+  imagenUrl        String?
+  horarioApertura  String?
+  horarioCierre    String?
+  activo           Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+  mesas            Mesa[]
+  reservas         Reserva[]
+  menus            Menu[]
+}
+
+model Mesa {
+  id        Int       @id @default(autoincrement())
+  negocioId Int
+  negocio   Negocio   @relation(fields: [negocioId], references: [id], onDelete: Cascade)
+  etiqueta  String
+  capacidad Int
+  posX      Int       @default(0)
+  posY      Int       @default(0)
+  ancho     Int       @default(80)
+  alto      Int       @default(80)
+  activa    Boolean   @default(true)
+  reservas  Reserva[]
+}
+
+model Reserva {
+  id             Int           @id @default(autoincrement())
+  mesaId         Int
+  mesa           Mesa          @relation(fields: [mesaId], references: [id])
+  usuarioId      Int
+  usuario        Usuario       @relation(fields: [usuarioId], references: [id])
+  negocioId      Int
+  negocio        Negocio       @relation(fields: [negocioId], references: [id])
+  fecha          DateTime      @db.Date
+  horaInicio     String?
+  nombreContacto String?
+  numPersonas    Int?
+  estado         EstadoReserva @default(PENDIENTE)
+  createdAt      DateTime      @default(now())
+
+  @@unique([mesaId, fecha])
+}
+
+enum EstadoReserva {
+  PENDIENTE
+  CONFIRMADA
+  CANCELADA
+}
+
+model Menu {
+  id        Int      @id @default(autoincrement())
+  negocioId Int
+  negocio   Negocio  @relation(fields: [negocioId], references: [id], onDelete: Cascade)
+  nombre    String
+  activo    Boolean  @default(true)
+  platos    Plato[]
+}
+
+model Plato {
+  id          Int     @id @default(autoincrement())
+  menuId      Int
+  menu        Menu    @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  nombre      String
+  descripcion String?
+  precio      Float?
+  categoria   String?
+  disponible  Boolean @default(true)
+}

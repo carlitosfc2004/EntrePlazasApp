@@ -1,0 +1,62 @@
+const express = require('express')
+const router = express.Router()
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+const prisma = require('../prisma')
+
+// Registro
+router.post('/registro', async (req, res) => {
+  const { nombre, apellidos, email, password, telefono, rol } = req.body
+
+  try {
+    const existe = await prisma.usuario.findUnique({ where: { email } })
+    if (existe) {
+      return res.status(400).json({ error: 'El email ya está registrado' })
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10)
+
+    const usuario = await prisma.usuario.create({
+      data: { nombre, apellidos, email, passwordHash, telefono, rol: rol || 'CLIENTE' }
+    })
+
+    const token = jwt.sign(
+      { id: usuario.id, email: usuario.email, rol: usuario.rol },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    )
+
+    res.status(201).json({ token, usuario: { id: usuario.id, nombre: usuario.nombre, rol: usuario.rol } })
+  } catch (error) {
+    res.status(500).json({ error: 'Error al registrar usuario' })
+  }
+})
+
+// Login
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body
+
+  try {
+    const usuario = await prisma.usuario.findUnique({ where: { email } })
+    if (!usuario) {
+      return res.status(400).json({ error: 'Email o contraseña incorrectos' })
+    }
+
+    const passwordValido = await bcrypt.compare(password, usuario.passwordHash)
+    if (!passwordValido) {
+      return res.status(400).json({ error: 'Email o contraseña incorrectos' })
+    }
+
+    const token = jwt.sign(
+      { id: usuario.id, email: usuario.email, rol: usuario.rol },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    )
+
+    res.json({ token, usuario: { id: usuario.id, nombre: usuario.nombre, rol: usuario.rol } })
+  } catch (error) {
+    res.status(500).json({ error: 'Error al iniciar sesión' })
+  }
+})
+
+module.exports = router
