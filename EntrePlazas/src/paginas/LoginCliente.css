@@ -1,0 +1,64 @@
+.login-cliente-root {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 64px);
+    padding: 40px 24px;
+}
+
+.login-cliente-card {
+    width: 100%;
+    max-width: 420px;
+}
+
+.login-cliente-card h1 {
+    font-size: 26px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.login-cliente-sub {
+    color: var(--gris-texto);
+    font-size: 15px;
+    margin-bottom: 32px;
+}
+
+.login-tabs {
+    display: flex;
+    background: var(--gris-medio);
+    border-radius: var(--radio);
+    padding: 4px;
+    margin-bottom: 28px;
+    border: 1px solid var(--gris-borde);
+}
+
+.login-tab {
+    flex: 1;
+    padding: 10px;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--gris-texto);
+    background: transparent;
+    transition: all 0.2s;
+}
+
+.login-tab.activo {
+    background: var(--acento);
+    color: white;
+}
+
+.login-cliente-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.login-error {
+    background: rgba(232, 86, 42, 0.12);
+    border: 1px solid rgba(232, 86, 42, 0.3);
+    border-radius: var(--radio);
+    padding: 12px 16px;
+    font-size: 14px;
+    color: var(--acento);
+}

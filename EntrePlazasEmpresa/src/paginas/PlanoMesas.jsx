@@ -1,25 +1,42 @@
 import { useState, useEffect, useRef } from 'react'
-import { DndContext, useDraggable, useDroppable } from '@dnd-kit/core'
+import { DndContext, useDraggable, useDroppable, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
 import axios from 'axios'
 import './PlanoMesas.css'
 
 const API = 'http://localhost:3001/api'
+
+const FORMAS = [
+  { id: 'cuadrado', label: 'Cuadrado', icono: '⬜' },
+  { id: 'rectangulo', label: 'Rectángulo', icono: '▬' },
+  { id: 'circulo', label: 'Círculo', icono: '⭕' },
+]
+
+const TAMAÑOS = [
+  { id: 'pequena', label: 'Pequeña', ancho: 70, alto: 70 },
+  { id: 'mediana', label: 'Mediana', ancho: 90, alto: 90 },
+  { id: 'grande', label: 'Grande', ancho: 120, alto: 120 },
+  { id: 'rectangulo', label: 'Alargada', ancho: 140, alto: 80 },
+]
 
 function Mesa({ mesa, seleccionada, onClick }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: mesa.id.toString(),
   })
 
+  const esCirculo = mesa.forma === 'circulo'
+  const esRectangulo = mesa.forma === 'rectangulo'
+
   const style = {
     position: 'absolute',
     left: mesa.posX,
     top: mesa.posY,
     width: mesa.ancho,
-    height: mesa.alto,
+    height: esRectangulo ? mesa.alto * 0.65 : mesa.alto,
     transform: transform ? `translate(${transform.x}px, ${transform.y}px)` : undefined,
     zIndex: isDragging ? 999 : seleccionada ? 10 : 1,
     opacity: isDragging ? 0.85 : 1,
     cursor: isDragging ? 'grabbing' : 'grab',
+    borderRadius: esCirculo ? '50%' : esRectangulo ? '10px' : '10px',
   }
 
   return (
@@ -37,10 +54,10 @@ function Mesa({ mesa, seleccionada, onClick }) {
   )
 }
 
-function Lienzo({ children }) {
+function Lienzo({ children, zoom }) {
   const { setNodeRef } = useDroppable({ id: 'lienzo' })
   return (
-    <div ref={setNodeRef} className="lienzo">
+    <div ref={setNodeRef} className="lienzo" style={{ transform: `scale(${zoom})`, transformOrigin: 'top left' }}>
       {children}
     </div>
   )
@@ -50,20 +67,23 @@ export default function PlanoMesas({ negocioId, token }) {
   const [mesas, setMesas] = useState([])
   const [seleccionada, setSeleccionada] = useState(null)
   const [cargando, setCargando] = useState(true)
-  const [formNueva, setFormNueva] = useState({ etiqueta: '', capacidad: 4 })
+  const [zoom, setZoom] = useState(1)
   const [mostrarForm, setMostrarForm] = useState(false)
+  const [formNueva, setFormNueva] = useState({
+    etiqueta: '',
+    capacidad: 4,
+    forma: 'cuadrado',
+    tamaño: 'mediana'
+  })
   const lienzoRef = useRef(null)
-
   const headers = { Authorization: `Bearer ${token}` }
 
-  useEffect(() => {
-    cargarMesas()
-  }, [])
+  useEffect(() => { cargarMesas() }, [])
 
   const cargarMesas = async () => {
     try {
       const { data } = await axios.get(`${API}/mesas/negocio/${negocioId}`)
-      setMesas(data)
+      setMesas(data.map(m => ({ ...m, forma: m.forma || 'cuadrado' })))
     } catch {
       console.error('Error cargando mesas')
     } finally {
@@ -74,22 +94,21 @@ export default function PlanoMesas({ negocioId, token }) {
   const handleDragEnd = async (event) => {
     const { active, delta } = event
     if (!delta) return
-
     const mesaId = parseInt(active.id)
     const mesa = mesas.find(m => m.id === mesaId)
     if (!mesa) return
 
-    const lienzoRect = lienzoRef.current?.getBoundingClientRect()
-    const nuevaPosX = Math.max(0, Math.min(mesa.posX + delta.x, (lienzoRect?.width || 800) - mesa.ancho))
-    const nuevaPosY = Math.max(0, Math.min(mesa.posY + delta.y, (lienzoRect?.height || 600) - mesa.alto))
+    const nuevaPosX = Math.max(0, mesa.posX + delta.x / zoom)
+    const nuevaPosY = Math.max(0, mesa.posY + delta.y / zoom)
 
     setMesas(prev => prev.map(m =>
       m.id === mesaId ? { ...m, posX: nuevaPosX, posY: nuevaPosY } : m
     ))
+    setSeleccionada(prev => prev?.id === mesaId ? { ...prev, posX: nuevaPosX, posY: nuevaPosY } : prev)
 
     try {
       await axios.put(`${API}/mesas/${mesaId}/posicion`,
-        { posX: nuevaPosX, posY: nuevaPosY },
+        { posX: Math.round(nuevaPosX), posY: Math.round(nuevaPosY) },
         { headers }
       )
     } catch {
@@ -99,18 +118,22 @@ export default function PlanoMesas({ negocioId, token }) {
 
   const crearMesa = async (e) => {
     e.preventDefault()
+    const tamaño = TAMAÑOS.find(t => t.id === formNueva.tamaño) || TAMAÑOS[1]
+    const ancho = formNueva.forma === 'rectangulo' ? tamaño.ancho + 40 : tamaño.ancho
+    const alto = tamaño.alto
+
     try {
       const { data } = await axios.post(`${API}/mesas`, {
         negocioId,
         etiqueta: formNueva.etiqueta,
         capacidad: parseInt(formNueva.capacidad),
-        posX: 50 + mesas.length * 20,
-        posY: 50 + mesas.length * 20,
-        ancho: 90,
-        alto: 90
+        posX: 40 + (mesas.length % 6) * 160,
+        posY: 40 + Math.floor(mesas.length / 6) * 160,
+        ancho,
+        alto
       }, { headers })
-      setMesas(prev => [...prev, data])
-      setFormNueva({ etiqueta: '', capacidad: 4 })
+      setMesas(prev => [...prev, { ...data, forma: formNueva.forma }])
+      setFormNueva({ etiqueta: '', capacidad: 4, forma: 'cuadrado', tamaño: 'mediana' })
       setMostrarForm(false)
     } catch {
       alert('Error al crear mesa')
@@ -128,6 +151,15 @@ export default function PlanoMesas({ negocioId, token }) {
     }
   }
 
+  const sensors = useSensors(
+    useSensor(MouseSensor, {
+      activationConstraint: { distance: 8 }
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 200, tolerance: 5 }
+    })
+  )
+
   if (cargando) return <div className="plano-loading">Cargando plano...</div>
 
   return (
@@ -137,24 +169,34 @@ export default function PlanoMesas({ negocioId, token }) {
           <h2>Editor de plano</h2>
           <span className="toolbar-info">{mesas.length} mesas · Arrastra para mover</span>
         </div>
-        <button className="btn-nueva-mesa" onClick={() => setMostrarForm(true)}>
-          + Nueva mesa
-        </button>
+        <div className="toolbar-der">
+          <div className="zoom-controles">
+            <button className="zoom-btn" onClick={() => setZoom(z => Math.max(0.4, z - 0.1))}>−</button>
+            <span className="zoom-valor">{Math.round(zoom * 100)}%</span>
+            <button className="zoom-btn" onClick={() => setZoom(z => Math.min(2, z + 0.1))}>+</button>
+            <button className="zoom-btn" onClick={() => setZoom(1)}>↺</button>
+          </div>
+          <button className="btn-nueva-mesa" onClick={() => setMostrarForm(true)}>
+            + Nueva mesa
+          </button>
+        </div>
       </div>
 
-      <div className="plano-workspace" ref={lienzoRef}>
-        <DndContext onDragEnd={handleDragEnd}>
-          <Lienzo>
-            {mesas.map(mesa => (
-              <Mesa
-                key={mesa.id}
-                mesa={mesa}
-                seleccionada={seleccionada?.id === mesa.id}
-                onClick={setSeleccionada}
-              />
-            ))}
-          </Lienzo>
-        </DndContext>
+      <div className="plano-workspace">
+        <div className="lienzo-contenedor" onClick={() => setSeleccionada(null)}>
+          <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+            <Lienzo zoom={zoom}>
+              {mesas.map(mesa => (
+                <Mesa
+                  key={mesa.id}
+                  mesa={mesa}
+                  seleccionada={seleccionada?.id === mesa.id}
+                  onClick={setSeleccionada}
+                />
+              ))}
+            </Lienzo>
+          </DndContext>
+        </div>
 
         {seleccionada && (
           <div className="panel-mesa">
@@ -164,18 +206,23 @@ export default function PlanoMesas({ negocioId, token }) {
             </div>
             <div className="panel-mesa-info">
               <div className="panel-dato">
+                <span className="panel-label">Forma</span>
+                <span className="panel-valor" style={{ textTransform: 'capitalize' }}>{seleccionada.forma}</span>
+              </div>
+              <div className="panel-dato">
                 <span className="panel-label">Capacidad</span>
                 <span className="panel-valor">{seleccionada.capacidad} personas</span>
+              </div>
+              <div className="panel-dato">
+                <span className="panel-label">Tamaño</span>
+                <span className="panel-valor">{seleccionada.ancho} × {seleccionada.alto}px</span>
               </div>
               <div className="panel-dato">
                 <span className="panel-label">Posición</span>
                 <span className="panel-valor">X:{Math.round(seleccionada.posX)} Y:{Math.round(seleccionada.posY)}</span>
               </div>
             </div>
-            <button
-              className="btn-eliminar"
-              onClick={() => eliminarMesa(seleccionada)}
-            >
+            <button className="btn-eliminar" onClick={() => eliminarMesa(seleccionada)}>
               Eliminar mesa
             </button>
           </div>
@@ -187,8 +234,9 @@ export default function PlanoMesas({ negocioId, token }) {
           <div className="modal-card" onClick={e => e.stopPropagation()}>
             <h3>Nueva mesa</h3>
             <form onSubmit={crearMesa} className="modal-form">
+
               <div className="campo">
-                <label>Etiqueta</label>
+                <label>Nombre de la mesa</label>
                 <input
                   type="text"
                   placeholder="Mesa 1, Barra, Terraza..."
@@ -198,17 +246,52 @@ export default function PlanoMesas({ negocioId, token }) {
                   autoFocus
                 />
               </div>
+
               <div className="campo">
                 <label>Capacidad (personas)</label>
                 <input
                   type="number"
                   min="1"
-                  max="20"
+                  max="30"
                   value={formNueva.capacidad}
                   onChange={e => setFormNueva({ ...formNueva, capacidad: e.target.value })}
                   required
                 />
               </div>
+
+              <div className="campo">
+                <label>Forma</label>
+                <div className="selector-formas">
+                  {FORMAS.map(f => (
+                    <button
+                      key={f.id}
+                      type="button"
+                      className={`forma-btn ${formNueva.forma === f.id ? 'activo' : ''}`}
+                      onClick={() => setFormNueva({ ...formNueva, forma: f.id })}
+                    >
+                      <span className="forma-icono">{f.icono}</span>
+                      <span className="forma-label">{f.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="campo">
+                <label>Tamaño</label>
+                <div className="selector-tamaños">
+                  {TAMAÑOS.map(t => (
+                    <button
+                      key={t.id}
+                      type="button"
+                      className={`tamaño-btn ${formNueva.tamaño === t.id ? 'activo' : ''}`}
+                      onClick={() => setFormNueva({ ...formNueva, tamaño: t.id })}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <div className="modal-botones">
                 <button type="button" className="btn-cancelar" onClick={() => setMostrarForm(false)}>
                   Cancelar

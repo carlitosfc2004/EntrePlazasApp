@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import './Dashboard.css'
+import Reservas from './Reservas'
 import PlanoMesas from './PlanoMesas'
+import MiNegocio from './MiNegocio'
 
 const API = 'http://localhost:3001/api'
 
@@ -165,29 +167,29 @@ export default function Dashboard() {
             className={`nav-item ${vistaActiva === 'inicio' ? 'activo' : ''}`}
             onClick={() => setVistaActiva('inicio')}
           >
-            <span className="nav-icono">▦</span> Inicio
+            <i className="bi bi-house-door nav-icono"></i> Inicio
           </button>
           <button
             className={`nav-item ${vistaActiva === 'plano' ? 'activo' : ''}`}
             onClick={() => setVistaActiva('plano')}
           >
-            <span className="nav-icono">⊞</span> Plano de mesas
+            <i className="bi bi-grid nav-icono"></i> Plano de mesas
           </button>
           <button
             className={`nav-item ${vistaActiva === 'reservas' ? 'activo' : ''}`}
             onClick={() => setVistaActiva('reservas')}
           >
-            <span className="nav-icono">📋</span> Reservas
+            <i className="bi bi-calendar-check nav-icono"></i> Reservas
           </button>
           <button
             className={`nav-item ${vistaActiva === 'negocio' ? 'activo' : ''}`}
             onClick={() => setVistaActiva('negocio')}
           >
-            <span className="nav-icono">⚙</span> Mi negocio
+            <i className="bi bi-gear nav-icono"></i> Mi negocio
           </button>
         </nav>
         <button className="sidebar-salir" onClick={cerrarSesion}>
-          Cerrar sesión
+          <i className="bi bi-box-arrow-left nav-icono"></i> Cerrar sesión
         </button>
       </aside>
 
@@ -210,55 +212,59 @@ export default function Dashboard() {
                 <span className="stat-card-label">Mesas activas</span>
               </div>
               <div className="stat-card">
-                <span className="stat-card-num">
-                  {negocio.mesas?.length
-                    ? Math.round(((negocio.mesas.length - reservasHoy.length) / negocio.mesas.length) * 100)
-                    : 0}%
-                </span>
-                <span className="stat-card-label">Disponibilidad</span>
-              </div>
-            </div>
+  <span className="stat-card-num">
+    {negocio.mesas?.length
+      ? Math.round(((negocio.mesas.length - reservasHoy.length) / negocio.mesas.length) * 100)
+      : 0}%
+  </span>
+  <span className="stat-card-label">Disponibilidad</span>
+</div>
+</div>
 
-            <div className="seccion">
-              <h2>Reservas de hoy</h2>
-              {reservasHoy.length === 0 ? (
-                <div className="vacio">No hay reservas para hoy</div>
-              ) : (
-                <div className="reservas-lista">
-                  {reservasHoy.map(r => (
-                    <div key={r.id} className="reserva-item">
-                      <div className="reserva-info">
-                        <span className="reserva-nombre">{r.nombreContacto || r.usuario?.nombre}</span>
-                        <span className="reserva-detalle">Mesa {r.mesa?.etiqueta} · {r.numPersonas} personas · {r.horaInicio}</span>
-                      </div>
-                      <span className={`reserva-estado ${r.estado.toLowerCase()}`}>{r.estado}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+<div className="seccion">
+  <h2>Reservas de hoy</h2>
+  {reservasHoy.length === 0 ? (
+    <div className="vacio">No hay reservas para hoy</div>
+  ) : (
+    <div className="reservas-lista">
+      {reservasHoy.map(r => (
+        <div key={r.id} className="reserva-item">
+          <div className="reserva-info">
+            <span className="reserva-nombre">
+              <i className="bi bi-person-circle"></i> {r.nombreContacto || r.usuario?.nombre}
+            </span>
+            <span className="reserva-detalle">
+              <i className="bi bi-table"></i> Mesa {r.mesa?.etiqueta} · 
+              <i className="bi bi-people"></i> {r.numPersonas} personas · 
+              <i className="bi bi-clock"></i> {r.horaInicio}
+            </span>
+          </div>
+          <span className={`reserva-estado ${r.estado.toLowerCase()}`}>
+            <i className="bi bi-info-circle"></i> {r.estado}
+          </span>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
           </div>
         )}
 
         {vistaActiva === 'plano' && (
             <div className="dash-contenido">
-                <PlanoMesas negocioId={negocio.id} token={token} />
+              <PlanoMesas negocioId={negocio.id} token={token} />
             </div>
         )}
 
         {vistaActiva === 'reservas' && (
           <div className="dash-contenido">
-            <div className="dash-header">
-              <h1>Todas las reservas</h1>
-            </div>
+            <Reservas negocioId={negocio.id} token={token} />
           </div>
         )}
 
         {vistaActiva === 'negocio' && (
           <div className="dash-contenido">
-            <div className="dash-header">
-              <h1>Mi negocio</h1>
-            </div>
+            <MiNegocio negocio={negocio} token={token} onActualizar={cargarNegocio} />
           </div>
         )}
       </main>
