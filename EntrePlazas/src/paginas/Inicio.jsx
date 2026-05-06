@@ -4,7 +4,7 @@ import axios from 'axios'
 import Navbar from './Navbar'
 import './Inicio.css'
 
-const API = 'http://localhost:3001/api'
+const API = 'https://entreplazas-api.onrender.com/api'
 
 export default function Inicio() {
     const navigate = useNavigate()

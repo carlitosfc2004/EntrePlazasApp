@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import './Reservas.css'
 
-const API = 'http://localhost:3001/api'
+const API = 'https://entreplazas-api.onrender.com/api'
 
 const ESTADOS = ['TODAS', 'PENDIENTE', 'CONFIRMADA', 'CANCELADA']
 

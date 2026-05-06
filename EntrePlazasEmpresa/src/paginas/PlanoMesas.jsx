@@ -3,7 +3,7 @@ import { DndContext, useDraggable, useDroppable, MouseSensor, TouchSensor, useSe
 import axios from 'axios'
 import './PlanoMesas.css'
 
-const API = 'http://localhost:3001/api'
+const API = 'https://entreplazas-api.onrender.com/api'
 
 const FORMAS = [
   { id: 'cuadrado', label: 'Cuadrado', icono: '⬜' },

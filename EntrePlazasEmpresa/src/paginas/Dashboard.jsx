@@ -6,7 +6,7 @@ import Reservas from './Reservas'
 import PlanoMesas from './PlanoMesas'
 import MiNegocio from './MiNegocio'
 
-const API = 'http://localhost:3001/api'
+const API = 'https://entreplazas-api.onrender.com/api'
 
 export default function Dashboard() {
   const navigate = useNavigate()

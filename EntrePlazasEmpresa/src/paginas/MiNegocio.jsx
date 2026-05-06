@@ -2,7 +2,7 @@ import { useState } from 'react'
 import axios from 'axios'
 import './MiNegocio.css'
 
-const API = 'http://localhost:3001/api'
+const API = 'https://entreplazas-api.onrender.com/api'
 
 export default function MiNegocio({ negocio, token, onActualizar }) {
     const [form, setForm] = useState({

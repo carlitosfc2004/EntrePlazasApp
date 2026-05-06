@@ -4,7 +4,7 @@ import axios from 'axios'
 import Navbar from './Navbar'
 import './LoginCliente.css'
 
-const API = 'http://localhost:3001/api'
+const API = 'https://entreplazas-api.onrender.com/api'
 
 export default function Login() {
   const navigate = useNavigate()
