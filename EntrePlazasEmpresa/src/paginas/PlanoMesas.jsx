@@ -7,7 +7,7 @@ const API = 'https://entreplazas-api.onrender.com/api'
 
 const FORMAS = [
   { id: 'cuadrado', label: 'Cuadrado', icono: 'bi bi-square' },
-  { id: 'rectangulo', label: 'Rectángulo', icono: 'bi bi-rectangle' },
+  { id: 'rectangulo', label: 'Rectángulo', icono: 'bi bi-aspect-ratio' },
   { id: 'circulo', label: 'Círculo', icono: 'bi bi-circle' },
 ]
 
