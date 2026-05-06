@@ -6,9 +6,9 @@ import './PlanoMesas.css'
 const API = 'https://entreplazas-api.onrender.com/api'
 
 const FORMAS = [
-  { id: 'cuadrado', label: 'Cuadrado', icono: '⬜' },
-  { id: 'rectangulo', label: 'Rectángulo', icono: '▬' },
-  { id: 'circulo', label: 'Círculo', icono: '⭕' },
+  { id: 'cuadrado', label: 'Cuadrado', icono: 'bi bi-square' },
+  { id: 'rectangulo', label: 'Rectángulo', icono: 'bi bi-rectangle' },
+  { id: 'circulo', label: 'Círculo', icono: 'bi bi-circle' },
 ]
 
 const TAMAÑOS = [
@@ -269,7 +269,7 @@ export default function PlanoMesas({ negocioId, token }) {
                       className={`forma-btn ${formNueva.forma === f.id ? 'activo' : ''}`}
                       onClick={() => setFormNueva({ ...formNueva, forma: f.id })}
                     >
-                      <span className="forma-icono">{f.icono}</span>
+                      <i className={`${f.icono} forma-icono`}></i>
                       <span className="forma-label">{f.label}</span>
                     </button>
                   ))}
