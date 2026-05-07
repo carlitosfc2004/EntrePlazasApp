@@ -3,14 +3,15 @@ const router = express.Router()
 const prisma = require('../prisma')
 const { verificarToken } = require('../middleware/auth')
 
-// Obtener disponibilidad de mesas de un negocio para una fecha
-router.get('/disponibilidad/:negocioId/:fecha', async (req, res) => {
-  const { negocioId, fecha } = req.params
+// Obtener disponibilidad por negocio, fecha y turno
+router.get('/disponibilidad/:negocioId/:fecha/:turnoId', async (req, res) => {
+  const { negocioId, fecha, turnoId } = req.params
   try {
     const reservasDelDia = await prisma.reserva.findMany({
       where: {
         negocioId: parseInt(negocioId),
         fecha: new Date(fecha),
+        turnoId: parseInt(turnoId),
         estado: { not: 'CANCELADA' }
       },
       select: { mesaId: true }
@@ -24,17 +25,18 @@ router.get('/disponibilidad/:negocioId/:fecha', async (req, res) => {
 
 // Crear reserva (usuario logueado)
 router.post('/', verificarToken, async (req, res) => {
-  const { mesaId, negocioId, fecha, horaInicio, nombreContacto, numPersonas } = req.body
+  const { mesaId, negocioId, fecha, horaInicio, nombreContacto, numPersonas, turnoId } = req.body
   try {
     const reservaExistente = await prisma.reserva.findFirst({
       where: {
         mesaId: parseInt(mesaId),
         fecha: new Date(fecha),
+        turnoId: parseInt(turnoId),
         estado: { not: 'CANCELADA' }
       }
     })
     if (reservaExistente) {
-      return res.status(400).json({ error: 'Esta mesa ya está reservada para ese día' })
+      return res.status(400).json({ error: 'Esta mesa ya está reservada para ese turno' })
     }
 
     const reserva = await prisma.reserva.create({
@@ -45,7 +47,8 @@ router.post('/', verificarToken, async (req, res) => {
         fecha: new Date(fecha),
         horaInicio,
         nombreContacto,
-        numPersonas: parseInt(numPersonas)
+        numPersonas: parseInt(numPersonas),
+        turnoId: parseInt(turnoId)
       }
     })
     res.status(201).json(reserva)

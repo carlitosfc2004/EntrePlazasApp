@@ -43,6 +43,7 @@ model Negocio {
   reservas         Reserva[]
   menus            Menu[]
   paredes          Pared[]
+  turnos           Turno[]
 }
 
 model Mesa {
@@ -73,6 +74,8 @@ model Reserva {
   numPersonas    Int?
   estado         EstadoReserva @default(PENDIENTE)
   createdAt      DateTime      @default(now())
+  turnoId        Int?
+  turno          Turno?    @relation(fields: [turnoId], references: [id])
 
   @@unique([mesaId, fecha])
 }
@@ -112,4 +115,15 @@ model Pared {
   x2        Int
   y2        Int
   grosor    Int     @default(8)
+}
+
+model Turno {
+  id          Int       @id @default(autoincrement())
+  negocioId   Int
+  negocio     Negocio   @relation(fields: [negocioId], references: [id], onDelete: Cascade)
+  nombre      String
+  horaInicio  String
+  horaFin     String
+  activo      Boolean   @default(true)
+  reservas    Reserva[]
 }
