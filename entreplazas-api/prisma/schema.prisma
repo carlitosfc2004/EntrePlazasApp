@@ -124,6 +124,18 @@ model DiasBloqueado {
   motivo    String?
 }
 
+model Plato {
+  id          Int     @id @default(autoincrement())
+  menuId      Int
+  menu        Menu    @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  nombre      String
+  descripcion String?
+  precio      Float?
+  categoria   String?
+  disponible  Boolean @default(true)
+  imagenUrl   String?
+}
+
 enum Rol {
   CLIENTE
   HOSTELERO

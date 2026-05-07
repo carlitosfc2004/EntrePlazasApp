@@ -5,6 +5,7 @@ import './Dashboard.css'
 import Reservas from './Reservas'
 import PlanoMesas from './PlanoMesas'
 import MiNegocio from './MiNegocio'
+import MenuDigital from './MenuDigital'
 
 const API = 'https://entreplazas-api.onrender.com/api'
 
@@ -162,24 +163,39 @@ export default function Dashboard() {
           <img src="/logo.png" alt="EntrePlazas" style={{ height: '36px', width: 'auto' }} />
         </div>
         <nav className="sidebar-nav">
+          // Pestaña Inicio
           <button
             className={`nav-item ${vistaActiva === 'inicio' ? 'activo' : ''}`}
             onClick={() => setVistaActiva('inicio')}
           >
             <i className="bi bi-house-door nav-icono"></i> Inicio
           </button>
+
+          // Pestaña Plano de mesas
           <button
             className={`nav-item ${vistaActiva === 'plano' ? 'activo' : ''}`}
             onClick={() => setVistaActiva('plano')}
           >
-            <i className="bi bi-grid nav-icono"></i> Plano de mesas
+            <i className="bi bi-grid nav-icono"></i> Mi plano de mesas
           </button>
+
+          // Pestaña Reservas
           <button
             className={`nav-item ${vistaActiva === 'reservas' ? 'activo' : ''}`}
             onClick={() => setVistaActiva('reservas')}
           >
             <i className="bi bi-calendar-check nav-icono"></i> Reservas
           </button>
+
+          // Pestaña Mi menú
+          <button
+            className={`nav-item ${vistaActiva === 'menu' ? 'activo' : ''}`}
+            onClick={() => setVistaActiva('menu')}
+          >
+            <i className="bi bi-journal-text nav-icono"></i> Mi menú
+          </button>
+
+          // Pestaña Mi negocio
           <button
             className={`nav-item ${vistaActiva === 'negocio' ? 'activo' : ''}`}
             onClick={() => setVistaActiva('negocio')}
@@ -258,6 +274,12 @@ export default function Dashboard() {
         {vistaActiva === 'reservas' && (
           <div className="dash-contenido">
             <Reservas negocioId={negocio.id} token={token} />
+          </div>
+        )}
+
+        {vistaActiva === 'menu' && (
+          <div className="dash-contenido">
+            <MenuDigital negocioId={negocio.id} token={token} />
           </div>
         )}
 
