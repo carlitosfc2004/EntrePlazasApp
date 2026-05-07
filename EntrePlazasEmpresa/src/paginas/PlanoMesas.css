@@ -310,5 +310,54 @@
     transition: color 0.2s;
   }
   
-  .btn-cancelar:hover { color: var(--blanco); }
-  .modal-botones .btn-principal { flex: 1; margin-top: 0; }
+  .btn-cancelar:hover { 
+    color: var(--blanco); 
+  }
+
+  .modal-botones .btn-principal { 
+    flex: 1; margin-top: 0; 
+  }
+
+  .modo-controles {
+  display: flex;
+  gap: 4px;
+  background: var(--gris-oscuro);
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+  padding: 4px;
+}
+
+.modo-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gris-texto);
+  background: transparent;
+  transition: all 0.2s;
+}
+
+.modo-btn:hover {
+  color: var(--blanco);
+  background: var(--gris-medio);
+}
+
+.modo-btn.activo {
+  background: var(--acento);
+  color: white;
+}
+
+.pared-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--gris-texto);
+  padding: 8px 12px;
+  background: var(--acento-suave);
+  border: 1px solid rgba(232, 86, 42, 0.2);
+  border-radius: var(--radio);
+}
