@@ -456,6 +456,38 @@
     margin-top: 8px;
 }
 
+.negocio-aviso {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(234, 179, 8, 0.05));
+  border: 1px solid rgba(234, 179, 8, 0.4);
+  border-left: 4px solid #eab308;
+  border-radius: var(--radio);
+  padding: 16px 20px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #eab308;
+  animation: pulso 2s ease-in-out infinite;
+}
+
+.negocio-aviso i {
+  font-size: 22px;
+  min-width: 22px;
+  animation: megafono 1.5s ease-in-out infinite;
+}
+
+@keyframes pulso {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.2); }
+  50% { box-shadow: 0 0 0 6px rgba(234, 179, 8, 0); }
+}
+
+@keyframes megafono {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-10deg); }
+  75% { transform: rotate(10deg); }
+}
+
 @media (max-width: 768px) {
     .negocio-root {
         padding: 16px;
