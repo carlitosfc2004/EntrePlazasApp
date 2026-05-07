@@ -66,6 +66,8 @@ export default function Negocio() {
   })
   const [reservando, setReservando] = useState(false)
   const [exito, setExito] = useState(false)
+  const [menus, setMenus] = useState([])
+  const [vistaActiva, setVistaActiva] = useState('plano') // 'plano' o 'menu'
   const token = localStorage.getItem('ep_cliente_token')
 
   useEffect(() => { cargarNegocio() }, [id])
@@ -75,7 +77,10 @@ export default function Negocio() {
     else setMesasOcupadas([])
   }, [fecha, turnoSeleccionado, negocio])
 
+  {/* Carga toda la información del negocio: datos, mesas, paredes, turnos, días bloqueados y menús públicos */}
   const cargarNegocio = async () => {
+
+    {/* Datos del negocio y mesas */}
     try {
       const negocioRes = await axios.get(`${API}/negocios/${id}`)
       setNegocio(negocioRes.data)
@@ -84,6 +89,7 @@ export default function Negocio() {
       console.error('Error cargando negocio')
     }
 
+    {/* Turnos */} 
     try {
       const turnosRes = await axios.get(`${API}/turnos/negocio/${id}`)
       setTurnos(turnosRes.data)
@@ -91,6 +97,7 @@ export default function Negocio() {
       console.error('Error cargando turnos')
     }
 
+    {/* Paredes */}
     try {
       const paredesRes = await axios.get(`${API}/paredes/negocio/${id}`)
       setParedes(paredesRes.data)
@@ -98,11 +105,20 @@ export default function Negocio() {
       console.error('Error cargando paredes')
     }
 
+    {/* Días bloqueados */}
     try {
       const diasRes = await axios.get(`${API}/dias-bloqueados/negocio/${id}`)
       setDiasBloqueados(diasRes.data.map(d => d.fecha.split('T')[0]))
     } catch {
       console.error('Error cargando días bloqueados')
+    }
+    
+    {/* Menús públicos */}
+    try {
+      const menusRes = await axios.get(`${API}/menus/negocio/${id}/publico`)
+      setMenus(menusRes.data)
+    } catch {
+      console.error('Error cargando menús')
     }
 
     setCargando(false)
@@ -222,7 +238,22 @@ export default function Negocio() {
           </div>
         )}
 
-        <div className="negocio-plano-seccion">
+        <div className="negocio-pestanas">
+          <button
+            className={`pestana-btn ${vistaActiva === 'plano' ? 'activo' : ''}`}
+            onClick={() => setVistaActiva('plano')}
+          >
+            <i className="bi bi-grid"></i> Reservar mesa
+          </button>
+          <button
+            className={`pestana-btn ${vistaActiva === 'menu' ? 'activo' : ''}`}
+            onClick={() => setVistaActiva('menu')}
+          >
+            <i className="bi bi-journal-text"></i> Ver carta
+          </button>
+        </div>
+        
+        {vistaActiva === 'plano' && <div className="negocio-plano-seccion">
           <div className="plano-controles">
             <div className="plano-controles-izq">
               <h2>Elige tu mesa</h2>
@@ -319,7 +350,43 @@ export default function Negocio() {
               </div>
             </>
           )}
-        </div>
+        </div>}
+
+        {vistaActiva === 'menu' && (
+          <div className="menu-cliente">
+            {menus.length === 0 ? (
+              <div className="turnos-aviso">
+                <i className="bi bi-info-circle"></i>
+                Este establecimiento aún no tiene carta disponible.
+              </div>
+            ) : (
+              menus.map(menu => (
+                <div key={menu.id} className="menu-seccion">
+                  <h3 className="menu-seccion-titulo">{menu.nombre}</h3>
+                  <div className="platos-cliente-grid">
+                    {menu.platos.map(plato => (
+                      <div key={plato.id} className="plato-cliente-card">
+                        {plato.imagenUrl && (
+                          <div className="plato-cliente-imagen">
+                            <img src={plato.imagenUrl} alt={plato.nombre} />
+                          </div>
+                        )}
+                        <div className="plato-cliente-info">
+                          <div className="plato-cliente-top">
+                            <span className="plato-nombre">{plato.nombre}</span>
+                            {plato.precio && <span className="plato-precio">{plato.precio.toFixed(2)} €</span>}
+                          </div>
+                          {plato.descripcion && <p className="plato-desc">{plato.descripcion}</p>}
+                          {plato.categoria && <span className="plato-categoria">{plato.categoria}</span>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
       </div>
 
       {mostrarModal && mesaSeleccionada && (
