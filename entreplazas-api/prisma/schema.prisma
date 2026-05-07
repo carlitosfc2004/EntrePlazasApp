@@ -7,67 +7,60 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model Usuario {
-  id           Int       @id @default(autoincrement())
+  id           Int      @default(autoincrement())
   nombre       String
   apellidos    String
-  email        String    @unique
+  email        String
   passwordHash String
   telefono     String?
-  rol          Rol       @default(CLIENTE)
-  createdAt    DateTime  @default(now())
-  negocios     Negocio[]
-  reservas     Reserva[]
+  rol          Rol      @default(CLIENTE)
+  createdAt    DateTime @default(now())
+
+  @@ignore
 }
 
-enum Rol {
-  CLIENTE
-  HOSTELERO
-}
-
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model Negocio {
-  id               Int       @id @default(autoincrement())
-  propietarioId    Int
-  propietario      Usuario   @relation(fields: [propietarioId], references: [id])
-  nombre           String
-  descripcion      String?
-  direccion        String?
-  ciudad           String?
-  telefono         String?
-  imagenUrl        String?
-  horarioApertura  String?
-  horarioCierre    String?
-  activo           Boolean   @default(true)
-  createdAt        DateTime  @default(now())
-  mesas            Mesa[]
-  reservas         Reserva[]
-  menus            Menu[]
-  paredes          Pared[]
-  turnos           Turno[]
+  id              Int      @default(autoincrement())
+  propietarioId   Int
+  nombre          String
+  descripcion     String?
+  direccion       String?
+  ciudad          String?
+  telefono        String?
+  imagenUrl       String?
+  horarioApertura String?
+  horarioCierre   String?
+  activo          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  mensajeAviso    String?
+
+  @@ignore
 }
 
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model Mesa {
-  id        Int       @id @default(autoincrement())
+  id        Int     @default(autoincrement())
   negocioId Int
-  negocio   Negocio   @relation(fields: [negocioId], references: [id], onDelete: Cascade)
   etiqueta  String
   capacidad Int
-  posX      Int       @default(0)
-  posY      Int       @default(0)
-  ancho     Int       @default(80)
-  alto      Int       @default(80)
-  activa    Boolean   @default(true)
-  reservas  Reserva[]
+  posX      Int     @default(0)
+  posY      Int     @default(0)
+  ancho     Int     @default(80)
+  alto      Int     @default(80)
+  activa    Boolean @default(true)
+
+  @@ignore
 }
 
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model Reserva {
-  id             Int           @id @default(autoincrement())
+  id             Int           @default(autoincrement())
   mesaId         Int
-  mesa           Mesa          @relation(fields: [mesaId], references: [id])
   usuarioId      Int
-  usuario        Usuario       @relation(fields: [usuarioId], references: [id])
   negocioId      Int
-  negocio        Negocio       @relation(fields: [negocioId], references: [id])
   fecha          DateTime      @db.Date
   horaInicio     String?
   nombreContacto String?
@@ -75,55 +68,67 @@ model Reserva {
   estado         EstadoReserva @default(PENDIENTE)
   createdAt      DateTime      @default(now())
   turnoId        Int?
-  turno          Turno?    @relation(fields: [turnoId], references: [id])
 
-  @@unique([mesaId, fecha])
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model Menu {
+  id        Int     @default(autoincrement())
+  negocioId Int
+  nombre    String
+  activo    Boolean @default(true)
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model Plato {
+  id          Int     @default(autoincrement())
+  menuId      Int
+  nombre      String
+  descripcion String?
+  precio      Float?
+  categoria   String?
+  disponible  Boolean @default(true)
+
+  @@ignore
+}
+
+model Pared {
+  id        Int @id @default(autoincrement())
+  negocioId Int
+  x1        Int
+  y1        Int
+  x2        Int
+  y2        Int
+  grosor    Int @default(8)
+}
+
+model Turno {
+  id         Int     @id @default(autoincrement())
+  negocioId  Int
+  nombre     String  @db.VarChar(100)
+  horaInicio String  @db.VarChar(5)
+  horaFin    String  @db.VarChar(5)
+  activo     Boolean @default(true)
+  diasSemana String? @default("1,2,3,4,5,6,0")
+}
+
+model DiasBloqueado {
+  id        Int      @id @default(autoincrement())
+  negocioId Int
+  fecha     DateTime @db.Date
+  motivo    String?  @db.VarChar(255)
+}
+
+enum Rol {
+  CLIENTE
+  HOSTELERO
 }
 
 enum EstadoReserva {
   PENDIENTE
   CONFIRMADA
   CANCELADA
-}
-
-model Menu {
-  id        Int      @id @default(autoincrement())
-  negocioId Int
-  negocio   Negocio  @relation(fields: [negocioId], references: [id], onDelete: Cascade)
-  nombre    String
-  activo    Boolean  @default(true)
-  platos    Plato[]
-}
-
-model Plato {
-  id          Int     @id @default(autoincrement())
-  menuId      Int
-  menu        Menu    @relation(fields: [menuId], references: [id], onDelete: Cascade)
-  nombre      String
-  descripcion String?
-  precio      Float?
-  categoria   String?
-  disponible  Boolean @default(true)
-}
-
-model Pared {
-  id        Int     @id @default(autoincrement())
-  negocioId Int
-  negocio   Negocio @relation(fields: [negocioId], references: [id], onDelete: Cascade)
-  x1        Int
-  y1        Int
-  x2        Int
-  y2        Int
-  grosor    Int     @default(8)
-}
-
-model Turno {
-  id          Int       @id @default(autoincrement())
-  negocioId   Int
-  negocio     Negocio   @relation(fields: [negocioId], references: [id], onDelete: Cascade)
-  nombre      String
-  horaInicio  String
-  horaFin     String
-  activo      Boolean   @default(true)
-  reservas    Reserva[]
 }

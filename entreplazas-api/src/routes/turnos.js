@@ -22,14 +22,15 @@ router.get('/negocio/:negocioId', async (req, res) => {
 
 // Crear turno (solo hostelero)
 router.post('/', verificarToken, async (req, res) => {
-    const { negocioId, nombre, horaInicio, horaFin } = req.body
+    const { negocioId, nombre, horaInicio, horaFin, diasSemana } = req.body
     try {
             const turno = await prisma.turno.create({
                 data: {
                     negocioId: parseInt(negocioId),
                     nombre,
                     horaInicio,
-                    horaFin
+                    horaFin,
+                    diasSemana: diasSemana || '0,1,2,3,4,5,6', // Por defecto todos los días
                 }
             })
         res.status(201).json(turno)

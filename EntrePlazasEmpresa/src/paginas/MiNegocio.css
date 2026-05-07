@@ -279,3 +279,40 @@ textarea::placeholder {
   border-color: var(--acento);
   color: var(--acento);
 }
+
+.dias-semana-selector {
+  display: flex;
+  gap: 6px;
+}
+
+.dia-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--gris-medio);
+  border: 2px solid var(--gris-borde);
+  color: var(--gris-texto);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dia-btn:hover {
+  border-color: var(--acento);
+  color: var(--blanco);
+}
+
+.dia-btn.activo {
+  background: var(--acento);
+  border-color: var(--acento);
+  color: white;
+}
+
+.turno-dias {
+  font-size: 11px;
+  color: var(--acento);
+  margin-top: 2px;
+}

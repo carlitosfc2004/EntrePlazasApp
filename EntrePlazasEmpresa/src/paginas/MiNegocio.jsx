@@ -3,6 +3,16 @@ import axios from 'axios'
 import API from '../config'
 import './MiNegocio.css'
 
+const DIAS_SEMANA = [
+  { id: '1', label: 'L' , nombre: 'Lunes' },
+  { id: '2', label: 'M' , nombre: 'Martes' },
+  { id: '3', label: 'X' , nombre: 'Miércoles' },
+  { id: '4', label: 'J' , nombre: 'Jueves' },
+  { id: '5', label: 'V' , nombre: 'Viernes' },
+  { id: '6', label: 'S' , nombre: 'Sábado' },
+  { id: '0', label: 'D' , nombre: 'Domingo' },
+]
+
 export default function MiNegocio({ negocio, token, onActualizar }) {
   const [form, setForm] = useState({
     nombre: negocio.nombre || '',
@@ -11,7 +21,8 @@ export default function MiNegocio({ negocio, token, onActualizar }) {
     ciudad: negocio.ciudad || '',
     telefono: negocio.telefono || '',
     horarioApertura: negocio.horarioApertura || '',
-    horarioCierre: negocio.horarioCierre || ''
+    horarioCierre: negocio.horarioCierre || '',
+    mensajeAviso: negocio.mensajeAviso || ''
   })
   const [guardando, setGuardando] = useState(false)
   const [exito, setExito] = useState(false)
@@ -20,19 +31,27 @@ export default function MiNegocio({ negocio, token, onActualizar }) {
   )
   const [subiendoImagen, setSubiendoImagen] = useState(false)
   const [turnos, setTurnos] = useState([])
-  const [formTurno, setFormTurno] = useState({ nombre: '', horaInicio: '', horaFin: '' })
+  const [formTurno, setFormTurno] = useState({ nombre: '', horaInicio: '', horaFin: '', diasSemana: ['1','2','3','4','5','6','0'] })
   const [añadiendoTurno, setAñadiendoTurno] = useState(false)
+  const [diasBloqueados, setDiasBloqueados] = useState([])
+  const [formDia, setFormDia] = useState({ fecha: '', motivo: '' })
+  const [añadiendoDia, setAñadiendoDia] = useState(false)
   const headers = { Authorization: `Bearer ${token}` }
 
-  useEffect(() => { cargarTurnos() }, [])
+  useEffect(() => { cargarTurnos(); cargarDiasBloqueados() }, [])
 
   const cargarTurnos = async () => {
     try {
       const { data } = await axios.get(`${API}/turnos/negocio/${negocio.id}`)
       setTurnos(data)
-    } catch {
-      console.error('Error cargando turnos')
-    }
+    } catch { console.error('Error cargando turnos') }
+  }
+
+  const cargarDiasBloqueados = async () => {
+    try {
+      const { data } = await axios.get(`${API}/dias-bloqueados/negocio/${negocio.id}`)
+      setDiasBloqueados(data)
+    } catch { console.error('Error cargando días bloqueados') }
   }
 
   const handleChange = e => {
@@ -73,21 +92,32 @@ export default function MiNegocio({ negocio, token, onActualizar }) {
     }
   }
 
+  const toggleDiaSemana = (diaId) => {
+    const dias = formTurno.diasSemana.includes(diaId)
+      ? formTurno.diasSemana.filter(d => d !== diaId)
+      : [...formTurno.diasSemana, diaId]
+    setFormTurno({ ...formTurno, diasSemana: dias })
+  }
+
   const crearTurno = async (e) => {
     e.preventDefault()
+    console.log('diasSemana', formTurno.diasSemana)
+    if (formTurno.diasSemana.length === 0) {
+      alert('Selecciona al menos un día de la semana')
+      return
+    }
     try {
       await axios.post(`${API}/turnos`, {
         negocioId: negocio.id,
         nombre: formTurno.nombre,
         horaInicio: formTurno.horaInicio,
-        horaFin: formTurno.horaFin
+        horaFin: formTurno.horaFin,
+        diasSemana: formTurno.diasSemana.join(',')
       }, { headers })
-      setFormTurno({ nombre: '', horaInicio: '', horaFin: '' })
+      setFormTurno({ nombre: '', horaInicio: '', horaFin: '', diasSemana: ['1','2','3','4','5','6','0'] })
       setAñadiendoTurno(false)
       cargarTurnos()
-    } catch {
-      alert('Error al crear turno')
-    }
+    } catch { alert('Error al crear turno') }
   }
 
   const eliminarTurno = async (id) => {
@@ -95,9 +125,41 @@ export default function MiNegocio({ negocio, token, onActualizar }) {
     try {
       await axios.delete(`${API}/turnos/${id}`, { headers })
       cargarTurnos()
-    } catch {
-      alert('Error al eliminar turno')
-    }
+    } catch { alert('Error al eliminar turno') }
+  }
+
+  const bloquearDia = async (e) => {
+    e.preventDefault()
+    try {
+      await axios.post(`${API}/dias-bloqueados`, {
+        negocioId: negocio.id,
+        fecha: formDia.fecha,
+        motivo: formDia.motivo
+      }, { headers })
+      setFormDia({ fecha: '', motivo: '' })
+      setAñadiendoDia(false)
+      cargarDiasBloqueados()
+    } catch { alert('Error al bloquear día') }
+  }
+
+  const desbloquearDia = async (id) => {
+    if (!confirm('¿Desbloquear este día?')) return
+    try {
+      await axios.delete(`${API}/dias-bloqueados/${id}`, { headers })
+      cargarDiasBloqueados()
+    } catch { alert('Error al desbloquear día') }
+  }
+
+  const formatFecha = (fecha) => {
+    return new Date(fecha).toLocaleDateString('es-ES', {
+      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+    })
+  }
+
+  const getNombreDias = (diasSemana) => {
+    if (!diasSemana) return 'Todos los días'
+    const ids = diasSemana.split(',')
+    return DIAS_SEMANA.filter(d => ids.includes(d.id)).map(d => d.nombre).join(', ')
   }
 
   return (
@@ -125,9 +187,7 @@ export default function MiNegocio({ negocio, token, onActualizar }) {
                     <span>Sin imagen</span>
                   </div>
               }
-              {subiendoImagen && (
-                <div className="imagen-overlay"><div className="spinner" /></div>
-              )}
+              {subiendoImagen && <div className="imagen-overlay"><div className="spinner" /></div>}
             </div>
             <div className="imagen-acciones">
               <p className="imagen-info">Foto principal de tu local.</p>
@@ -173,6 +233,16 @@ export default function MiNegocio({ negocio, token, onActualizar }) {
                 <label>Hora de cierre</label>
                 <input type="time" name="horarioCierre" value={form.horarioCierre} onChange={handleChange} />
               </div>
+            </div>
+            <div className="campo">
+              <label>Mensaje de aviso <span style={{ color: 'var(--gris-texto)', fontWeight: 400 }}>(opcional)</span></label>
+              <textarea
+                name="mensajeAviso"
+                value={form.mensajeAviso}
+                onChange={handleChange}
+                placeholder="Ej: No abrimos el día 25. Cerrado por vacaciones del 1 al 7 de agosto..."
+                rows={2}
+              />
             </div>
             {exito && (
               <div className="exito-msg">
@@ -239,17 +309,16 @@ export default function MiNegocio({ negocio, token, onActualizar }) {
               <i className="bi bi-clock-history"></i>
               <span>Turnos de servicio</span>
             </div>
-
             {turnos.length === 0 && !añadiendoTurno && (
-              <p className="turnos-vacio">No hay turnos configurados. Añade los turnos en los que tu local acepta reservas.</p>
+              <p className="turnos-vacio">No hay turnos configurados.</p>
             )}
-
             <div className="turnos-lista">
               {turnos.map(t => (
                 <div key={t.id} className="turno-item">
                   <div className="turno-info">
                     <span className="turno-nombre">{t.nombre}</span>
                     <span className="turno-horario">{t.horaInicio} — {t.horaFin}</span>
+                    <span className="turno-dias">{getNombreDias(t.diasSemana)}</span>
                   </div>
                   <button className="turno-eliminar" onClick={() => eliminarTurno(t.id)}>
                     <i className="bi bi-trash"></i>
@@ -257,7 +326,6 @@ export default function MiNegocio({ negocio, token, onActualizar }) {
                 </div>
               ))}
             </div>
-
             {añadiendoTurno ? (
               <form onSubmit={crearTurno} className="turno-form">
                 <div className="campo">
@@ -281,6 +349,22 @@ export default function MiNegocio({ negocio, token, onActualizar }) {
                       required />
                   </div>
                 </div>
+                <div className="campo">
+                  <label>Días de la semana</label>
+                  <div className="dias-semana-selector">
+                    {DIAS_SEMANA.map(d => (
+                      <button
+                        key={d.id}
+                        type="button"
+                        className={`dia-btn ${formTurno.diasSemana.includes(d.id) ? 'activo' : ''}`}
+                        onClick={() => toggleDiaSemana(d.id)}
+                        title={d.nombre}
+                      >
+                        {d.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <div className="modal-botones">
                   <button type="button" className="btn-cancelar"
                     onClick={() => setAñadiendoTurno(false)}>Cancelar</button>
@@ -290,6 +374,55 @@ export default function MiNegocio({ negocio, token, onActualizar }) {
             ) : (
               <button className="btn-añadir-turno" onClick={() => setAñadiendoTurno(true)}>
                 <i className="bi bi-plus-circle"></i> Añadir turno
+              </button>
+            )}
+          </div>
+
+          <div className="info-card">
+            <div className="card-titulo">
+              <i className="bi bi-calendar-x"></i>
+              <span>Días bloqueados</span>
+            </div>
+            {diasBloqueados.length === 0 && !añadiendoDia && (
+              <p className="turnos-vacio">No hay días bloqueados.</p>
+            )}
+            <div className="turnos-lista">
+              {diasBloqueados.map(d => (
+                <div key={d.id} className="turno-item">
+                  <div className="turno-info">
+                    <span className="turno-nombre">{formatFecha(d.fecha)}</span>
+                    {d.motivo && <span className="turno-horario">{d.motivo}</span>}
+                  </div>
+                  <button className="turno-eliminar" onClick={() => desbloquearDia(d.id)}>
+                    <i className="bi bi-trash"></i>
+                  </button>
+                </div>
+              ))}
+            </div>
+            {añadiendoDia ? (
+              <form onSubmit={bloquearDia} className="turno-form">
+                <div className="campo">
+                  <label>Fecha a bloquear</label>
+                  <input type="date" value={formDia.fecha}
+                    min={new Date().toISOString().split('T')[0]}
+                    onChange={e => setFormDia({ ...formDia, fecha: e.target.value })}
+                    required />
+                </div>
+                <div className="campo">
+                  <label>Motivo <span style={{ color: 'var(--gris-texto)', fontWeight: 400 }}>(opcional)</span></label>
+                  <input type="text" placeholder="Ej: Cerrado por festivo"
+                    value={formDia.motivo}
+                    onChange={e => setFormDia({ ...formDia, motivo: e.target.value })} />
+                </div>
+                <div className="modal-botones">
+                  <button type="button" className="btn-cancelar"
+                    onClick={() => setAñadiendoDia(false)}>Cancelar</button>
+                  <button type="submit" className="btn-principal">Bloquear día</button>
+                </div>
+              </form>
+            ) : (
+              <button className="btn-añadir-turno" onClick={() => setAñadiendoDia(true)}>
+                <i className="bi bi-plus-circle"></i> Bloquear día
               </button>
             )}
           </div>
