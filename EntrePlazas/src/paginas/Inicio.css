@@ -216,4 +216,32 @@
     transition: background 0.2s;
 }
 
-.negocio-btn:hover { background: rgba(232, 86, 42, 0.2); }
+.negocio-btn:hover { 
+    background: rgba(232, 86, 42, 0.2); 
+}
+
+@media (max-width: 768px) {
+    .inicio-hero {
+        padding: 48px 20px;
+    }
+
+    .inicio-contenido {
+        padding: 24px 16px;
+    }
+
+    .negocios-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .navbar {
+        padding: 0 16px;
+    }
+
+    .navbar-der {
+        gap: 12px;
+    }
+
+    .navbar-link span {
+        display: none;
+    }
+}

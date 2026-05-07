@@ -204,3 +204,21 @@
     color: var(--acento);
     border-color: var(--acento);
 }
+
+@media (max-width: 768px) {
+    .misreservas-root {
+        padding: 24px 16px;
+    }
+
+    .reserva-tarjeta {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .reserva-tarjeta-der {
+        align-items: flex-start;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+    }
+}
