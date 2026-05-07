@@ -60,6 +60,7 @@ export default function Negocio() {
   const [cargando, setCargando] = useState(true)
   const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0])
   const [mostrarModal, setMostrarModal] = useState(false)
+  const [diasBloqueados, setDiasBloqueados] = useState([])
   const [formReserva, setFormReserva] = useState({
     horaInicio: '', nombreContacto: '', numPersonas: 1
   })
@@ -95,6 +96,13 @@ export default function Negocio() {
       setParedes(paredesRes.data)
     } catch {
       console.error('Error cargando paredes')
+    }
+
+    try {
+      const diasRes = await axios.get(`${API}/dias-bloqueados/negocio/${id}`)
+      setDiasBloqueados(diasRes.data.map(d => d.fecha.split('T')[0]))
+    } catch {
+      console.error('Error cargando días bloqueados')
     }
 
     setCargando(false)
@@ -169,6 +177,19 @@ export default function Negocio() {
     ? generarHoras(turnoSeleccionado.horaInicio, turnoSeleccionado.horaFin)
     : []
 
+  const hoy = new Date().toISOString().split('T')[0]
+  const maxFecha = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+
+  const fechaBloqueada = (f) => diasBloqueados.includes(f)
+
+  const turnosFiltrados = (() => {
+    if (!fecha) return turnos
+    const diaSemana = new Date(fecha + 'T00:00:00').getDay().toString()
+    return turnos.filter(t => {
+      const dias = t.diasSemana ? t.diasSemana.split(',') : ['0','1','2','3','4','5','6']
+      return dias.includes(diaSemana)
+    })
+  })()
   return (
     <div>
       <Navbar />
@@ -194,6 +215,12 @@ export default function Negocio() {
             <div className="disp-texto">mesas libres</div>
           </div>
         </div>
+        {negocio.mensajeAviso && (
+          <div className="negocio-aviso">
+            <i className="bi bi-megaphone"></i>
+            {negocio.mensajeAviso}
+          </div>
+        )}
 
         <div className="negocio-plano-seccion">
           <div className="plano-controles">
@@ -206,23 +233,37 @@ export default function Negocio() {
               <input
                 type="date"
                 value={fecha}
-                min={new Date().toISOString().split('T')[0]}
-                onChange={e => { setFecha(e.target.value); setTurnoSeleccionado(null) }}
+                min={hoy}
+                max={maxFecha}
+                onChange={e => {
+                  const nuevaFecha = e.target.value
+                  if (fechaBloqueada(nuevaFecha)) {
+                    alert('Este día está cerrado. Por favor selecciona otra fecha.')
+                    return
+                  }
+                  setFecha(nuevaFecha)
+                  setTurnoSeleccionado(null)
+                }}
                 style={{ width: '180px' }}
               />
             </div>
           </div>
 
-          {turnos.length === 0 ? (
+          {fechaBloqueada(fecha) ? (
+            <div className="turnos-aviso">
+              <i className="bi bi-x-circle"></i>
+              Este día está cerrado. Por favor selecciona otra fecha.
+            </div>
+          ) : turnosFiltrados.length === 0 ? (
             <div className="turnos-aviso">
               <i className="bi bi-info-circle"></i>
-              Este establecimiento aún no tiene turnos configurados.
+              No hay turnos disponibles para este día.
             </div>
           ) : (
             <div className="turnos-selector">
               <p className="turnos-label">Selecciona un turno:</p>
               <div className="turnos-opciones">
-                {turnos.map(t => (
+                {turnosFiltrados.map(t => (
                   <button
                     key={t.id}
                     className={`turno-opcion ${turnoSeleccionado?.id === t.id ? 'activo' : ''}`}
