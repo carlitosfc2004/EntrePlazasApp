@@ -15,8 +15,7 @@ export default function Navbar() {
   return (
     <nav className="navbar">
       <Link to="/" className="navbar-marca">
-        <span className="navbar-logo">EP</span>
-        <span className="navbar-nombre">EntrePlazas</span>
+        <img src="/logo.png" alt="EntrePlazas" className="navbar-logo-img" />
       </Link>
       <div className="navbar-der">
         {token ? (

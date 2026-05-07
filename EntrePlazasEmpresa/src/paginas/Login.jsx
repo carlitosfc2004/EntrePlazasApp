@@ -55,10 +55,7 @@ export default function Login() {
   return (
     <div className="login-root">
       <div className="login-izquierda">
-        <div className="login-marca">
-          <span className="login-logo">EP</span>
-          <span className="login-nombre">EntrePlazas</span>
-        </div>
+        <img src="/logo.jpg" alt="EntrePlazas" style={{ height: '40px', width: 'auto' }} />
         <div className="login-hero">
           <h1 className="login-titulo">Gestiona tu local<br />con elegancia</h1>
           <p className="login-subtitulo">El panel profesional para hosteleros que quieren modernizar su negocio.</p>
