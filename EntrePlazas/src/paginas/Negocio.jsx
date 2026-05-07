@@ -76,20 +76,28 @@ export default function Negocio() {
 
   const cargarNegocio = async () => {
     try {
-      const [negocioRes, turnosRes] = await Promise.all([
-        axios.get(`${API}/negocios/${id}`),
-        axios.get(`${API}/turnos/negocio/${id}`),
-        axios.get(`${API}/paredes/negocio/${id}`)
-      ])
+      const negocioRes = await axios.get(`${API}/negocios/${id}`)
       setNegocio(negocioRes.data)
       setMesas(negocioRes.data.mesas || [])
-      setTurnos(turnosRes.data)
-      setParedes(paredesRes.data)
     } catch {
       console.error('Error cargando negocio')
-    } finally {
-      setCargando(false)
     }
+
+    try {
+      const turnosRes = await axios.get(`${API}/turnos/negocio/${id}`)
+      setTurnos(turnosRes.data)
+    } catch {
+      console.error('Error cargando turnos')
+    }
+
+    try {
+      const paredesRes = await axios.get(`${API}/paredes/negocio/${id}`)
+      setParedes(paredesRes.data)
+    } catch {
+      console.error('Error cargando paredes')
+    }
+
+    setCargando(false)
   }
 
   const cargarDisponibilidad = async () => {
