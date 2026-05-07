@@ -144,11 +144,12 @@
 }
 
 .plano-cliente {
-    width: 1400px;
-    height: 900px;
-    position: relative;
-    background-image: radial-gradient(circle, #2a2a2a 1px, transparent 1px);
-    background-size: 28px 28px;
+  width: 1400px;
+  height: 1000px;
+  min-height: 1000px;
+  position: relative;
+  background-image: radial-gradient(circle, #2a2a2a 1px, transparent 1px);
+  background-size: 28px 28px;
 }
 
 .mesa-cliente {
