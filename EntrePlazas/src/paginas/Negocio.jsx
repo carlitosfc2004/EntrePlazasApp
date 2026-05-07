@@ -6,6 +6,21 @@ import './Negocio.css'
 
 const API = 'https://entreplazas-api.onrender.com/api'
 
+function generarHoras(horaInicio, horaFin) {
+  const horas = []
+  const [hI, mI] = horaInicio.split(':').map(Number)
+  const [hF, mF] = horaFin.split(':').map(Number)
+  let totalMinutosInicio = hI * 60 + mI
+  let totalMinutosFin = hF * 60 + mF
+  if (totalMinutosFin <= totalMinutosInicio) totalMinutosFin += 24 * 60
+  for (let m = totalMinutosInicio; m < totalMinutosFin; m += 30) {
+    const horas24 = Math.floor(m / 60) % 24
+    const minutos = m % 60
+    horas.push(`${String(horas24).padStart(2, '0')}:${String(minutos).padStart(2, '0')}`)
+  }
+  return horas
+}
+
 function MesaCliente({ mesa, ocupada, seleccionada, onClick }) {
   const esCirculo = mesa.forma === 'circulo'
   const esRectangulo = mesa.forma === 'rectangulo'
@@ -37,28 +52,36 @@ export default function Negocio() {
   const navigate = useNavigate()
   const [negocio, setNegocio] = useState(null)
   const [mesas, setMesas] = useState([])
+  const [turnos, setTurnos] = useState([])
+  const [turnoSeleccionado, setTurnoSeleccionado] = useState(null)
   const [mesasOcupadas, setMesasOcupadas] = useState([])
   const [mesaSeleccionada, setMesaSeleccionada] = useState(null)
   const [cargando, setCargando] = useState(true)
   const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0])
   const [mostrarModal, setMostrarModal] = useState(false)
   const [formReserva, setFormReserva] = useState({
-    horaInicio: '',
-    nombreContacto: '',
-    numPersonas: 1
+    horaInicio: '', nombreContacto: '', numPersonas: 1
   })
   const [reservando, setReservando] = useState(false)
   const [exito, setExito] = useState(false)
   const token = localStorage.getItem('ep_cliente_token')
 
   useEffect(() => { cargarNegocio() }, [id])
-  useEffect(() => { if (negocio) cargarDisponibilidad() }, [fecha, negocio])
+
+  useEffect(() => {
+    if (negocio && turnoSeleccionado) cargarDisponibilidad()
+    else setMesasOcupadas([])
+  }, [fecha, turnoSeleccionado, negocio])
 
   const cargarNegocio = async () => {
     try {
-      const { data } = await axios.get(`${API}/negocios/${id}`)
-      setNegocio(data)
-      setMesas(data.mesas || [])
+      const [negocioRes, turnosRes] = await Promise.all([
+        axios.get(`${API}/negocios/${id}`),
+        axios.get(`${API}/turnos/negocio/${id}`)
+      ])
+      setNegocio(negocioRes.data)
+      setMesas(negocioRes.data.mesas || [])
+      setTurnos(turnosRes.data)
     } catch {
       console.error('Error cargando negocio')
     } finally {
@@ -67,8 +90,11 @@ export default function Negocio() {
   }
 
   const cargarDisponibilidad = async () => {
+    if (!turnoSeleccionado) return
     try {
-      const { data } = await axios.get(`${API}/reservas/disponibilidad/${id}/${fecha}`)
+      const { data } = await axios.get(
+        `${API}/reservas/disponibilidad/${id}/${fecha}/${turnoSeleccionado.id}`
+      )
       setMesasOcupadas(data.mesasOcupadas || [])
       setMesaSeleccionada(null)
     } catch {
@@ -77,12 +103,14 @@ export default function Negocio() {
   }
 
   const seleccionarMesa = (mesa) => {
-    if (!token) {
-      navigate('/login')
-      return
-    }
+    if (!token) { navigate('/login'); return }
+    if (!turnoSeleccionado) { alert('Selecciona primero un turno'); return }
     setMesaSeleccionada(mesa)
-    setFormReserva({ ...formReserva, numPersonas: Math.min(formReserva.numPersonas, mesa.capacidad) })
+    setFormReserva({
+      horaInicio: generarHoras(turnoSeleccionado.horaInicio, turnoSeleccionado.horaFin)[0] || '',
+      nombreContacto: '',
+      numPersonas: 1
+    })
     setMostrarModal(true)
   }
 
@@ -97,7 +125,8 @@ export default function Negocio() {
         fecha,
         horaInicio: formReserva.horaInicio,
         nombreContacto: formReserva.nombreContacto,
-        numPersonas: formReserva.numPersonas
+        numPersonas: formReserva.numPersonas,
+        turnoId: turnoSeleccionado.id
       }, { headers: { Authorization: `Bearer ${token}` } })
       setExito(true)
       setMesasOcupadas(prev => [...prev, mesaSeleccionada.id])
@@ -114,26 +143,25 @@ export default function Negocio() {
   }
 
   if (cargando) return (
-    <div>
-      <Navbar />
-      <div className="negocio-loading"><div className="spinner" /></div>
-    </div>
+    <div><Navbar /><div className="negocio-loading"><div className="spinner" /></div></div>
   )
 
   if (!negocio) return (
-    <div>
-      <Navbar />
-      <div className="negocio-loading">Negocio no encontrado</div>
-    </div>
+    <div><Navbar /><div className="negocio-loading">Negocio no encontrado</div></div>
   )
 
-  const mesasLibres = mesas.filter(m => !mesasOcupadas.includes(m.id)).length
+  const mesasLibres = turnoSeleccionado
+    ? mesas.filter(m => !mesasOcupadas.includes(m.id)).length
+    : mesas.length
+
+  const horasDisponibles = turnoSeleccionado
+    ? generarHoras(turnoSeleccionado.horaInicio, turnoSeleccionado.horaFin)
+    : []
 
   return (
     <div>
       <Navbar />
       <div className="negocio-root">
-
         <div className="negocio-cabecera">
           <div className="negocio-cabecera-info">
             <h1>{negocio.nombre}</h1>
@@ -152,7 +180,7 @@ export default function Negocio() {
           </div>
           <div className="negocio-disponibilidad">
             <div className="disp-numero">{mesasLibres}</div>
-            <div className="disp-texto">mesas libres hoy</div>
+            <div className="disp-texto">mesas libres</div>
           </div>
         </div>
 
@@ -160,45 +188,69 @@ export default function Negocio() {
           <div className="plano-controles">
             <div className="plano-controles-izq">
               <h2>Elige tu mesa</h2>
-              <p className="plano-sub">Haz clic en una mesa libre para reservar</p>
+              <p className="plano-sub">Selecciona fecha y turno para ver la disponibilidad</p>
             </div>
             <div className="campo" style={{ width: 'auto' }}>
-              <label>Fecha de la reserva</label>
+              <label>Fecha</label>
               <input
                 type="date"
                 value={fecha}
                 min={new Date().toISOString().split('T')[0]}
-                onChange={e => setFecha(e.target.value)}
+                onChange={e => { setFecha(e.target.value); setTurnoSeleccionado(null) }}
                 style={{ width: '180px' }}
               />
             </div>
           </div>
 
-          <div className="leyenda">
-            <span className="leyenda-item">
-              <span className="leyenda-color libre"></span> Libre
-            </span>
-            <span className="leyenda-item">
-              <span className="leyenda-color ocupada"></span> Ocupada
-            </span>
-            <span className="leyenda-item">
-              <span className="leyenda-color seleccionada"></span> Seleccionada
-            </span>
-          </div>
-
-          <div className="plano-cliente-contenedor">
-            <div className="plano-cliente">
-              {mesas.map(mesa => (
-                <MesaCliente
-                  key={mesa.id}
-                  mesa={mesa}
-                  ocupada={mesasOcupadas.includes(mesa.id)}
-                  seleccionada={mesaSeleccionada?.id === mesa.id}
-                  onClick={seleccionarMesa}
-                />
-              ))}
+          {turnos.length === 0 ? (
+            <div className="turnos-aviso">
+              <i className="bi bi-info-circle"></i>
+              Este establecimiento aún no tiene turnos configurados.
             </div>
-          </div>
+          ) : (
+            <div className="turnos-selector">
+              <p className="turnos-label">Selecciona un turno:</p>
+              <div className="turnos-opciones">
+                {turnos.map(t => (
+                  <button
+                    key={t.id}
+                    className={`turno-opcion ${turnoSeleccionado?.id === t.id ? 'activo' : ''}`}
+                    onClick={() => setTurnoSeleccionado(t)}
+                  >
+                    <span className="turno-opcion-nombre">{t.nombre}</span>
+                    <span className="turno-opcion-horario">{t.horaInicio} — {t.horaFin}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {turnoSeleccionado && (
+            <>
+              <div className="leyenda">
+                <span className="leyenda-item">
+                  <span className="leyenda-color libre"></span> Libre
+                </span>
+                <span className="leyenda-item">
+                  <span className="leyenda-color ocupada"></span> Ocupada
+                </span>
+              </div>
+
+              <div className="plano-cliente-contenedor">
+                <div className="plano-cliente">
+                  {mesas.map(mesa => (
+                    <MesaCliente
+                      key={mesa.id}
+                      mesa={mesa}
+                      ocupada={mesasOcupadas.includes(mesa.id)}
+                      seleccionada={mesaSeleccionada?.id === mesa.id}
+                      onClick={seleccionarMesa}
+                    />
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -216,7 +268,7 @@ export default function Negocio() {
                 <div className="modal-reserva-header">
                   <div>
                     <h3>Reservar {mesaSeleccionada.etiqueta}</h3>
-                    <p>Capacidad máxima: {mesaSeleccionada.capacidad} personas</p>
+                    <p>Turno: {turnoSeleccionado.nombre} · Máx. {mesaSeleccionada.capacidad} personas</p>
                   </div>
                   <button className="modal-cerrar" onClick={() => setMostrarModal(false)}>
                     <i className="bi bi-x-lg"></i>
@@ -247,16 +299,20 @@ export default function Negocio() {
                     </div>
                     <div className="campo">
                       <label>Hora de llegada</label>
-                      <input
-                        type="time"
+                      <select
                         value={formReserva.horaInicio}
                         onChange={e => setFormReserva({ ...formReserva, horaInicio: e.target.value })}
                         required
-                      />
+                      >
+                        {horasDisponibles.map(h => (
+                          <option key={h} value={h}>{h}</option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                   <div className="modal-resumen">
                     <span><i className="bi bi-calendar"></i> {new Date(fecha + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}</span>
+                    <span><i className="bi bi-clock"></i> {turnoSeleccionado.nombre}: {turnoSeleccionado.horaInicio} — {turnoSeleccionado.horaFin}</span>
                     <span><i className="bi bi-geo-alt"></i> {negocio.nombre}</span>
                   </div>
                   <button type="submit" className="btn-principal" disabled={reservando}>

@@ -288,3 +288,71 @@
     color: var(--gris-texto);
     font-size: 15px;
 }
+
+.turnos-aviso {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--gris-oscuro);
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+  padding: 16px 20px;
+  font-size: 14px;
+  color: var(--gris-texto);
+}
+
+.turnos-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.turnos-label {
+  font-size: 14px;
+  color: var(--gris-texto);
+  font-weight: 500;
+}
+
+.turnos-opciones {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.turno-opcion {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 24px;
+  background: var(--gris-oscuro);
+  border: 2px solid var(--gris-borde);
+  border-radius: var(--radio-lg);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  min-width: 160px;
+}
+
+.turno-opcion:hover {
+  border-color: var(--acento);
+}
+
+.turno-opcion.activo {
+  border-color: var(--acento);
+  background: var(--acento-suave);
+}
+
+.turno-opcion-nombre {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--blanco);
+}
+
+.turno-opcion-horario {
+  font-size: 13px;
+  color: var(--gris-texto);
+}
+
+.turno-opcion.activo .turno-opcion-horario {
+  color: var(--acento);
+}

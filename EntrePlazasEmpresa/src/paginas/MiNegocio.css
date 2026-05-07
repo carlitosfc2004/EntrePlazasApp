@@ -192,9 +192,90 @@ textarea::placeholder {
     font-family: var(--font-body);
 }
 
-.btn-subir-imagen:hover { border-color: var(--acento); }
+.btn-subir-imagen:hover { 
+    border-color: var(--acento); 
+}
 
 .imagen-hint {
     font-size: 12px;
     color: #555;
+}
+
+.turnos-vacio {
+  font-size: 13px;
+  color: var(--gris-texto);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.turnos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.turno-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--gris-medio);
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+  padding: 12px 16px;
+}
+
+.turno-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.turno-nombre {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.turno-horario {
+  font-size: 12px;
+  color: var(--gris-texto);
+}
+
+.turno-eliminar {
+  background: transparent;
+  color: var(--gris-texto);
+  font-size: 15px;
+  padding: 4px 8px;
+  transition: color 0.2s;
+}
+
+.turno-eliminar:hover {
+  color: var(--acento);
+}
+
+.turno-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.btn-añadir-turno {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px dashed var(--gris-borde);
+  color: var(--gris-texto);
+  padding: 10px 16px;
+  border-radius: var(--radio);
+  font-size: 14px;
+  width: 100%;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-añadir-turno:hover {
+  border-color: var(--acento);
+  color: var(--acento);
 }
