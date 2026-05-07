@@ -94,11 +94,11 @@ router.get('/mi/negocio', verificarToken, async (req, res) => {
 
 // Actualizar negocio
 router.put('/:id', verificarToken, async (req, res) => {
-  const { nombre, descripcion, direccion, ciudad, telefono, horarioApertura, horarioCierre } = req.body
+  const { nombre, descripcion, direccion, ciudad, telefono, horarioApertura, horarioCierre, mensajeAviso } = req.body
   try {
     const negocio = await prisma.negocio.update({
       where: { id: parseInt(req.params.id) },
-      data: { nombre, descripcion, direccion, ciudad, telefono, horarioApertura, horarioCierre }
+      data: { nombre, descripcion, direccion, ciudad, telefono, horarioApertura, horarioCierre, mensajeAviso }
     })
     res.json(negocio)
   } catch (error) {
