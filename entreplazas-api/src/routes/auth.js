@@ -55,7 +55,8 @@ router.post('/login', async (req, res) => {
 
     res.json({ token, usuario: { id: usuario.id, nombre: usuario.nombre, rol: usuario.rol } })
   } catch (error) {
-    res.status(500).json({ error: 'Error al iniciar sesión' })
+    console.error('ERROR LOGIN:', error.message)
+    res.status(500).json({ error: error.message })
   }
 })
 

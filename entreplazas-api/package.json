@@ -24,10 +24,5 @@
     "@prisma/client": "^6.19.3",
     "@types/node": "^25.6.0",
     "prisma": "^6.19.3"
-  },
-  "scripts": {
-    "start": "node src/index.js",
-    "dev": "node --watch src/index.js",
-    "postinstall": "prisma generate"
   }
 }
