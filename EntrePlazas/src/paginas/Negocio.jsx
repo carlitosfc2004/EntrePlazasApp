@@ -77,11 +77,13 @@ export default function Negocio() {
     try {
       const [negocioRes, turnosRes] = await Promise.all([
         axios.get(`${API}/negocios/${id}`),
-        axios.get(`${API}/turnos/negocio/${id}`)
+        axios.get(`${API}/turnos/negocio/${id}`),
+        axios.get(`${API}/paredes/negocio/${id}`)
       ])
       setNegocio(negocioRes.data)
       setMesas(negocioRes.data.mesas || [])
       setTurnos(turnosRes.data)
+      setParedes(paredesRes.data)
     } catch {
       console.error('Error cargando negocio')
     } finally {
@@ -238,6 +240,22 @@ export default function Negocio() {
 
               <div className="plano-cliente-contenedor">
                 <div className="plano-cliente">
+                  <svg style={{
+                    position: 'absolute', top: 0, left: 0,
+                    width: '100%', height: '100%',
+                    pointerEvents: 'none'
+                  }}>
+                    {paredes.map(p => (
+                      <line
+                        key={p.id}
+                        x1={p.x1} y1={p.y1}
+                        x2={p.x2} y2={p.y2}
+                        stroke="#6b7280"
+                        strokeWidth={p.grosor}
+                        strokeLinecap="round"
+                      />
+                    ))}
+                  </svg>
                   {mesas.map(mesa => (
                     <MesaCliente
                       key={mesa.id}

@@ -416,4 +416,16 @@
     .campo-grid {
         grid-template-columns: 1fr;
     }
+
+    .plano-cliente-contenedor {
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: var(--radio);
+    }
+
+    .plano-cliente {
+        width: 900px;
+        height: 600px;
+        min-width: 900px;
+    }
 }
