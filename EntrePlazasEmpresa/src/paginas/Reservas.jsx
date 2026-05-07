@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import './Reservas.css'
 import API from '../config'
+import './Reservas.css'
 
 const ESTADOS = ['TODAS', 'PENDIENTE', 'CONFIRMADA', 'CANCELADA']
 
@@ -10,6 +10,7 @@ export default function Reservas({ negocioId, token }) {
   const [cargando, setCargando] = useState(true)
   const [filtro, setFiltro] = useState('TODAS')
   const [busqueda, setBusqueda] = useState('')
+  const [diaExpandido, setDiaExpandido] = useState(null)
   const headers = { Authorization: `Bearer ${token}` }
 
   useEffect(() => { cargarReservas() }, [])
@@ -18,6 +19,8 @@ export default function Reservas({ negocioId, token }) {
     try {
       const { data } = await axios.get(`${API}/reservas/negocio/${negocioId}`, { headers })
       setReservas(data)
+      const hoy = new Date().toISOString().split('T')[0]
+      setDiaExpandido(hoy)
     } catch {
       console.error('Error cargando reservas')
     } finally {
@@ -53,11 +56,34 @@ export default function Reservas({ negocioId, token }) {
     return coincideFiltro && coincideBusqueda
   })
 
+  // Agrupar por fecha
+  const reservasPorDia = reservasFiltradas.reduce((acc, r) => {
+    const fecha = r.fecha.split('T')[0]
+    if (!acc[fecha]) acc[fecha] = []
+    acc[fecha].push(r)
+    return acc
+  }, {})
+
+  const diasOrdenados = Object.keys(reservasPorDia).sort((a, b) => new Date(b) - new Date(a))
+
   const formatFecha = (fecha) => {
-    return new Date(fecha).toLocaleDateString('es-ES', {
-      weekday: 'short', day: 'numeric', month: 'short'
+    const hoy = new Date().toISOString().split('T')[0]
+    const manana = new Date(Date.now() + 86400000).toISOString().split('T')[0]
+    if (fecha === hoy) return 'Hoy'
+    if (fecha === manana) return 'Mañana'
+    return new Date(fecha + 'T00:00:00').toLocaleDateString('es-ES', {
+      weekday: 'long', day: 'numeric', month: 'long'
     })
   }
+
+  const formatFechaCorta = (fecha) => {
+    return new Date(fecha + 'T00:00:00').toLocaleDateString('es-ES', {
+      day: 'numeric', month: 'short', year: 'numeric'
+    })
+  }
+
+  const esHoy = (fecha) => fecha === new Date().toISOString().split('T')[0]
+  const esPasado = (fecha) => new Date(fecha) < new Date(new Date().toISOString().split('T')[0])
 
   if (cargando) return <div className="reservas-loading">Cargando reservas...</div>
 
@@ -93,56 +119,86 @@ export default function Reservas({ negocioId, token }) {
         </div>
       </div>
 
-      {reservasFiltradas.length === 0 ? (
+      {diasOrdenados.length === 0 ? (
         <div className="vacio">
           <i className="bi bi-calendar-x" style={{ fontSize: 32, marginBottom: 12, display: 'block' }}></i>
           No hay reservas {filtro !== 'TODAS' ? `con estado ${filtro.toLowerCase()}` : ''}
         </div>
       ) : (
-        <div className="reservas-tabla">
-          <div className="tabla-header">
-            <span>Cliente</span>
-            <span>Mesa</span>
-            <span>Fecha</span>
-            <span>Hora</span>
-            <span>Personas</span>
-            <span>Estado</span>
-            <span>Acciones</span>
-          </div>
-          {reservasFiltradas.map(r => (
-            <div key={r.id} className="tabla-fila">
-              <span className="fila-cliente">
-                <i className="bi bi-person-circle"></i>
-                {r.nombreContacto || r.usuario?.nombre || '—'}
-              </span>
-              <span className="fila-mesa">
-                <i className="bi bi-grid-3x3"></i>
-                {r.mesa?.etiqueta || '—'}
-              </span>
-              <span>{formatFecha(r.fecha)}</span>
-              <span>{r.horaInicio || '—'}</span>
-              <span>
-                <i className="bi bi-people"></i> {r.numPersonas || '—'}
-              </span>
-              <span>
-                <span className={`badge-estado ${r.estado.toLowerCase()}`}>
-                  {r.estado.charAt(0) + r.estado.slice(1).toLowerCase()}
-                </span>
-              </span>
-              <span className="fila-acciones">
-                {r.estado === 'PENDIENTE' && (
-                  <button className="btn-confirmar" onClick={() => confirmar(r.id)}>
-                    <i className="bi bi-check-lg"></i>
-                  </button>
+        <div className="dias-lista">
+          {diasOrdenados.map(dia => {
+            const reservasDelDia = reservasPorDia[dia]
+            const expandido = diaExpandido === dia
+            const pendientes = reservasDelDia.filter(r => r.estado === 'PENDIENTE').length
+            const pasado = esPasado(dia)
+
+            return (
+              <div key={dia} className={`dia-grupo ${pasado ? 'pasado' : ''} ${esHoy(dia) ? 'hoy' : ''}`}>
+                <button
+                  className="dia-cabecera"
+                  onClick={() => setDiaExpandido(expandido ? null : dia)}
+                >
+                  <div className="dia-cabecera-izq">
+                    <span className="dia-nombre">{formatFecha(dia)}</span>
+                    <span className="dia-fecha-corta">{formatFechaCorta(dia)}</span>
+                  </div>
+                  <div className="dia-cabecera-der">
+                    <span className="dia-count">{reservasDelDia.length} reservas</span>
+                    {pendientes > 0 && (
+                      <span className="dia-pendientes">{pendientes} pendiente{pendientes > 1 ? 's' : ''}</span>
+                    )}
+                    <i className={`bi bi-chevron-${expandido ? 'up' : 'down'} dia-chevron`}></i>
+                  </div>
+                </button>
+
+                {expandido && (
+                  <div className="dia-reservas">
+                    <div className="tabla-header">
+                      <span>Cliente</span>
+                      <span>Mesa</span>
+                      <span>Turno / Hora</span>
+                      <span>Personas</span>
+                      <span>Estado</span>
+                      <span>Acciones</span>
+                    </div>
+                    {reservasDelDia.map(r => (
+                      <div key={r.id} className="tabla-fila">
+                        <span className="fila-cliente">
+                          <i className="bi bi-person-circle"></i>
+                          {r.nombreContacto || r.usuario?.nombre || '—'}
+                        </span>
+                        <span className="fila-mesa">
+                          <i className="bi bi-grid-3x3"></i>
+                          {r.mesa?.etiqueta || '—'}
+                        </span>
+                        <span>{r.horaInicio || '—'}</span>
+                        <span>
+                          <i className="bi bi-people"></i> {r.numPersonas || '—'}
+                        </span>
+                        <span>
+                          <span className={`badge-estado ${r.estado.toLowerCase()}`}>
+                            {r.estado.charAt(0) + r.estado.slice(1).toLowerCase()}
+                          </span>
+                        </span>
+                        <span className="fila-acciones">
+                          {r.estado === 'PENDIENTE' && (
+                            <button className="btn-confirmar" onClick={() => confirmar(r.id)}>
+                              <i className="bi bi-check-lg"></i>
+                            </button>
+                          )}
+                          {r.estado !== 'CANCELADA' && (
+                            <button className="btn-cancelar-sm" onClick={() => cancelar(r.id)}>
+                              <i className="bi bi-x-lg"></i>
+                            </button>
+                          )}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 )}
-                {r.estado !== 'CANCELADA' && (
-                  <button className="btn-cancelar-sm" onClick={() => cancelar(r.id)}>
-                    <i className="bi bi-x-lg"></i>
-                  </button>
-                )}
-              </span>
-            </div>
-          ))}
+              </div>
+            )
+          })}
         </div>
       )}
     </div>
