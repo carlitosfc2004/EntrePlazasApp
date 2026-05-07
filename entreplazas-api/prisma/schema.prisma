@@ -83,17 +83,6 @@ model Menu {
   platos    Plato[]
 }
 
-model Plato {
-  id          Int     @id @default(autoincrement())
-  menuId      Int
-  menu        Menu    @relation(fields: [menuId], references: [id], onDelete: Cascade)
-  nombre      String
-  descripcion String?
-  precio      Float?
-  categoria   String?
-  disponible  Boolean @default(true)
-}
-
 model Pared {
   id        Int     @id @default(autoincrement())
   negocioId Int
