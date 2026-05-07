@@ -52,6 +52,7 @@ export default function Negocio() {
   const navigate = useNavigate()
   const [negocio, setNegocio] = useState(null)
   const [mesas, setMesas] = useState([])
+  const [paredes, setParedes] = useState([])
   const [turnos, setTurnos] = useState([])
   const [turnoSeleccionado, setTurnoSeleccionado] = useState(null)
   const [mesasOcupadas, setMesasOcupadas] = useState([])
