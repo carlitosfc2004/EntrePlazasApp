@@ -1,15 +1,13 @@
+const cloudinary = require('cloudinary').v2
 const multer = require('multer')
-const path = require('path')
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'src/uploads/')
-    },
-    filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname)
-        cb(null, `negocio_${req.usuario.id}_${Date.now()}${ext}`)
-    }
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
 })
+
+const storage = multer.memoryStorage()
 
 const fileFilter = (req, file, cb) => {
     const permitidos = ['image/jpeg', 'image/png', 'image/webp']
@@ -26,4 +24,16 @@ const upload = multer({
     limits: { fileSize: 5 * 1024 * 1024 }
 })
 
-module.exports = upload
+const subirACloudinary = (buffer) => {
+    return new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+        { folder: 'entreplazas', resource_type: 'image' },
+        (error, result) => {
+            if (error) reject(error)
+            else resolve(result)
+        }
+        ).end(buffer)
+    })
+}
+
+module.exports = { upload, subirACloudinary }

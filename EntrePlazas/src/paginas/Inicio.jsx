@@ -70,7 +70,7 @@ return (
                 <div key={n.id} className="negocio-card" onClick={() => navigate(`/negocio/${n.id}`)}>
                     <div className="negocio-imagen">
                         {n.imagenUrl
-                            ? <img src={`https://entreplazas-api.onrender.com${n.imagenUrl}`} alt={n.nombre} />
+                            ? <img src={n.imagenUrl} alt={n.nombre} />
                             : <div className="negocio-imagen-placeholder">
                                 <i className="bi bi-shop"></i>
                             </div>

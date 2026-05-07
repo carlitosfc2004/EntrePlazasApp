@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const prisma = require('../prisma')
 const { verificarToken } = require('../middleware/auth')
-const upload = require('../middleware/upload')
+const { upload } = require('../middleware/upload')
 
 // Obtener todos los negocios activos (público)
 router.get('/', async (req, res) => {
@@ -107,16 +107,19 @@ router.put('/:id', verificarToken, async (req, res) => {
 })
 
 // Subir imagen del negocio
+const { upload, subirACloudinary } = require('../middleware/upload')
+
 router.post('/:id/imagen', verificarToken, upload.single('imagen'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No se subió ninguna imagen' })
   try {
-    const imagenUrl = `/uploads/${req.file.filename}`
+    const resultado = await subirACloudinary(req.file.buffer)
     const negocio = await prisma.negocio.update({
       where: { id: parseInt(req.params.id) },
-      data: { imagenUrl }
+      data: { imagenUrl: resultado.secure_url }
     })
     res.json({ imagenUrl: negocio.imagenUrl })
-  } catch {
+  } catch (error) {
+    console.error('Error subiendo imagen:', error)
     res.status(500).json({ error: 'Error al guardar la imagen' })
   }
 })

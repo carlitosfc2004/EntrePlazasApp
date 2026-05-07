@@ -27,7 +27,7 @@ export default function MiNegocio({ negocio, token, onActualizar }) {
   const [guardando, setGuardando] = useState(false)
   const [exito, setExito] = useState(false)
   const [imagenPreview, setImagenPreview] = useState(
-    negocio.imagenUrl ? `https://entreplazas-api.onrender.com${negocio.imagenUrl}` : null
+    negocio.imagenUrl ? negocio.imagenUrl : null
   )
   const [subiendoImagen, setSubiendoImagen] = useState(false)
   const [turnos, setTurnos] = useState([])
