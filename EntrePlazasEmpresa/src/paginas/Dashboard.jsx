@@ -159,7 +159,7 @@ export default function Dashboard() {
     <div className="dash-root">
       <aside className="dash-sidebar">
         <div className="sidebar-marca">
-          <img src="/logo.jpg" alt="EntrePlazas" style={{ height: '36px', width: 'auto' }} />
+          <img src="/logo.png" alt="EntrePlazas" style={{ height: '36px', width: 'auto' }} />
         </div>
         <nav className="sidebar-nav">
           <button
