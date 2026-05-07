@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Navbar from './Navbar'
+import MapaNegocio from './MapaNegocio'
 import './Negocio.css'
 
 const API = 'https://entreplazas-api.onrender.com/api'
@@ -231,6 +232,13 @@ export default function Negocio() {
             <div className="disp-texto">mesas libres</div>
           </div>
         </div>
+        {negocio.direccion && (
+          <MapaNegocio
+            direccion={negocio.direccion}
+            ciudad={negocio.ciudad}
+            nombre={negocio.nombre}
+          />
+        )}
         {negocio.mensajeAviso && (
           <div className="negocio-aviso">
             <i className="bi bi-megaphone"></i>

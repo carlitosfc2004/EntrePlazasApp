@@ -385,68 +385,75 @@
 }
 
 .pestana-btn:hover {
-  color: var(--blanco);
-  border-color: var(--gris-texto);
+    color: var(--blanco);
+    border-color: var(--gris-texto);
 }
 
 .pestana-btn.activo {
-  background: var(--acento);
-  border-color: var(--acento);
-  color: white;
+    background: var(--acento);
+    border-color: var(--acento);
+    color: white;
 }
 
 .menu-cliente {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
 }
 
 .menu-seccion-titulo {
-  font-size: 20px;
-  font-weight: 500;
-  margin-bottom: 16px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--gris-borde);
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--gris-borde);
 }
 
 .platos-cliente-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
 }
 
 .plato-cliente-card {
-  background: var(--gris-oscuro);
-  border: 1px solid var(--gris-borde);
-  border-radius: var(--radio);
-  overflow: hidden;
-  transition: border-color 0.2s;
+    background: var(--gris-oscuro);
+    border: 1px solid var(--gris-borde);
+    border-radius: var(--radio);
+    overflow: hidden;
+    transition: border-color 0.2s;
 }
 
 .plato-cliente-card:hover {
-  border-color: var(--acento);
+    border-color: var(--acento);
 }
 
 .plato-cliente-imagen {
-  height: 160px;
-  overflow: hidden;
+    height: 160px;
+    overflow: hidden;
 }
 
 .plato-cliente-imagen img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .plato-cliente-info {
-  padding: 14px;
+    padding: 14px;
 }
 
 .plato-cliente-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 6px;
+}
+
+.mapa-contenedor {
+    border-radius: var(--radio-lg);
+    overflow: hidden;
+    border: 1px solid var(--gris-borde);
+    margin-top: 8px;
 }
 
 @media (max-width: 768px) {
