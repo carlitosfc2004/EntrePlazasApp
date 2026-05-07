@@ -163,7 +163,7 @@ export default function Dashboard() {
           <img src="/logo.png" alt="EntrePlazas" style={{ height: '36px', width: 'auto' }} />
         </div>
         <nav className="sidebar-nav">
-          // Pestaña Inicio
+          {/* Pestaña Inicio */}
           <button
             className={`nav-item ${vistaActiva === 'inicio' ? 'activo' : ''}`}
             onClick={() => setVistaActiva('inicio')}
@@ -171,7 +171,7 @@ export default function Dashboard() {
             <i className="bi bi-house-door nav-icono"></i> Inicio
           </button>
 
-          // Pestaña Plano de mesas
+          {/* Pestaña Plano de mesas */}
           <button
             className={`nav-item ${vistaActiva === 'plano' ? 'activo' : ''}`}
             onClick={() => setVistaActiva('plano')}
@@ -179,7 +179,7 @@ export default function Dashboard() {
             <i className="bi bi-grid nav-icono"></i> Mi plano de mesas
           </button>
 
-          // Pestaña Reservas
+          {/* Pestaña Reservas */}
           <button
             className={`nav-item ${vistaActiva === 'reservas' ? 'activo' : ''}`}
             onClick={() => setVistaActiva('reservas')}
@@ -187,7 +187,7 @@ export default function Dashboard() {
             <i className="bi bi-calendar-check nav-icono"></i> Reservas
           </button>
 
-          // Pestaña Mi menú
+          {/* Pestaña Mi menú */}
           <button
             className={`nav-item ${vistaActiva === 'menu' ? 'activo' : ''}`}
             onClick={() => setVistaActiva('menu')}
@@ -195,7 +195,7 @@ export default function Dashboard() {
             <i className="bi bi-journal-text nav-icono"></i> Mi menú
           </button>
 
-          // Pestaña Mi negocio
+          {/* Pestaña Mi negocio */}
           <button
             className={`nav-item ${vistaActiva === 'negocio' ? 'activo' : ''}`}
             onClick={() => setVistaActiva('negocio')}
