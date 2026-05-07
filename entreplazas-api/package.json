@@ -4,10 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/index.js",
-    "dev": "node --watch src/index.js",
-    "postinstall": "npx prisma generate"
+    "start": "npx prisma generate && node src/index.js",
+    "dev": "node --watch src/index.js"
   },
   "keywords": [],
   "author": "",
