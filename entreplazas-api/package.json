@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npx prisma generate && node src/index.js",
-    "dev": "node --watch src/index.js"
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "build": "npx prisma generate"
   },
   "keywords": [],
   "author": "",
