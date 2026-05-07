@@ -145,7 +145,7 @@
 
 .plano-cliente {
     width: 1400px;
-    height: 700px;
+    height: 900px;
     position: relative;
     background-image: radial-gradient(circle, #2a2a2a 1px, transparent 1px);
     background-size: 28px 28px;
@@ -425,7 +425,7 @@
 
     .plano-cliente {
         width: 900px;
-        height: 600px;
+        height: 800px;
         min-width: 900px;
     }
 }
