@@ -18,4 +18,4 @@ try {
   console.error('Error creando PrismaClient:', error.message)
 }
 
-module.exports = prisma
+module.exports = global.prisma
