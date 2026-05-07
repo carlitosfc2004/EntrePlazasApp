@@ -42,6 +42,7 @@ model Negocio {
   mesas            Mesa[]
   reservas         Reserva[]
   menus            Menu[]
+  paredes          Pared[]
 }
 
 model Mesa {
@@ -100,4 +101,15 @@ model Plato {
   precio      Float?
   categoria   String?
   disponible  Boolean @default(true)
+}
+
+model Pared {
+  id        Int     @id @default(autoincrement())
+  negocioId Int
+  negocio   Negocio @relation(fields: [negocioId], references: [id], onDelete: Cascade)
+  x1        Int
+  y1        Int
+  x2        Int
+  y2        Int
+  grosor    Int     @default(8)
 }

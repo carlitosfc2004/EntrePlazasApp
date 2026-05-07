@@ -6,6 +6,7 @@ const authRoutes = require('./routes/auth')
 const negociosRoutes = require('./routes/negocios')
 const mesasRoutes = require('./routes/mesas')
 const reservasRoutes = require('./routes/reservas')
+const paredesRoutes = require('./routes/paredes')
 
 const app = express()
 
@@ -17,6 +18,7 @@ app.use('/api/auth', authRoutes)
 app.use('/api/negocios', negociosRoutes)
 app.use('/api/mesas', mesasRoutes)
 app.use('/api/reservas', reservasRoutes)
+app.use('/api/paredes', paredesRoutes)
 
 app.get('/', (req, res) => {
   res.json({ mensaje: 'API EntrePlazas funcionando' })
