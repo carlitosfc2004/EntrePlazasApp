@@ -1,9 +1,21 @@
 const { PrismaClient } = require('@prisma/client')
 
-const prisma = global.prisma || new PrismaClient()
+console.log('Intentando crear PrismaClient...')
+console.log('PrismaClient:', typeof PrismaClient)
 
-if (process.env.NODE_ENV !== 'production') {
-  global.prisma = prisma
+let prisma
+
+try {
+  prisma = new PrismaClient({
+    datasources: {
+      db: {
+        url: process.env.DATABASE_URL
+      }
+    }
+  })
+  console.log('PrismaClient creado correctamente')
+} catch (error) {
+  console.error('Error creando PrismaClient:', error.message)
 }
 
 module.exports = prisma
