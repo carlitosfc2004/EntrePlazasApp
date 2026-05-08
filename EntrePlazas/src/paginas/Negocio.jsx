@@ -138,6 +138,8 @@ export default function Negocio() {
     }
   }
 
+  const usuario = JSON.parse(localStorage.getItem('ep_cliente_usuario') || '{}')
+  
   const seleccionarMesa = (mesa) => {
     if (!token) { navigate('/login'); return }
     if (!turnoSeleccionado) { alert('Selecciona primero un turno'); return }
