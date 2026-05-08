@@ -64,6 +64,21 @@ export default function NuevaReservaHostelero({ negocio, token, onCreada }) {
         }
     }
 
+    function generarHoras(horaInicio, horaFin) {
+        const horas = []
+        const [hI, mI] = horaInicio.split(':').map(Number)
+        const [hF, mF] = horaFin.split(':').map(Number)
+        let totalMinutosInicio = hI * 60 + mI
+        let totalMinutosFin = hF * 60 + mF
+        if (totalMinutosFin <= totalMinutosInicio) totalMinutosFin += 24 * 60
+        for (let m = totalMinutosInicio; m < totalMinutosFin; m += 30) {
+            const h = Math.floor(m / 60) % 24
+            const min = m % 60
+            horas.push(`${String(h).padStart(2, '0')}:${String(min).padStart(2, '0')}`)
+        }
+        return horas
+        }
+
     return (
         <div>
             <div className="dash-header">
@@ -110,22 +125,28 @@ export default function NuevaReservaHostelero({ negocio, token, onCreada }) {
                         </div>
                         <div className="campo-grid">
                             <div className="campo">
-                                <label>Mesa</label>
-                                <select value={form.mesaId}
-                                    onChange={e => setForm({ ...form, mesaId: e.target.value })}
-                                    required
-                                    style={{ background: 'var(--gris-medio)', border: '1px solid var(--gris-borde)', borderRadius: 'var(--radio)', padding: '14px 16px', fontSize: '15px', color: 'var(--blanco)', width: '100%' }}>
-                                    <option value="">Selecciona mesa</option>
-                                    {mesas.map(m => (
-                                        <option key={m.id} value={m.id}>{m.etiqueta} ({m.capacidad} personas)</option>
-                                    ))}
-                                </select>
+                                <label>Teléfono</label>
+                                <input type="tel" placeholder="666 123 456"
+                                value={form.telefono}
+                                onChange={e => setForm({ ...form, telefono: e.target.value })} />
                             </div>
                             <div className="campo">
-                                <label>Hora</label>
-                                <input type="time" value={form.horaInicio}
-                                onChange={e => setForm({ ...form, horaInicio: e.target.value })}
-                                required />
+                                <label>Hora de llegada</label>
+                                <select
+                                    value={form.horaInicio}
+                                    onChange={e => setForm({ ...form, horaInicio: e.target.value })}
+                                    required
+                                    style={{ background: 'var(--gris-medio)', border: '1px solid var(--gris-borde)', borderRadius: 'var(--radio)', padding: '14px 16px', fontSize: '15px', color: 'var(--blanco)', width: '100%' }}
+                                    disabled={!form.turnoId}
+                                >
+                                    <option value="">Selecciona hora</option>
+                                    {form.turnoId && (() => {
+                                        const turno = turnos.find(t => t.id === parseInt(form.turnoId))
+                                        return turno ? generarHoras(turno.horaInicio, turno.horaFin).map(h => (
+                                            <option key={h} value={h}>{h}</option>
+                                        )) : null
+                                    })()}
+                                </select>
                             </div>
                         </div>
                         <div className="campo">
