@@ -6,6 +6,7 @@ import Reservas from './Reservas'
 import PlanoMesas from './PlanoMesas'
 import MiNegocio from './MiNegocio'
 import MenuDigital from './MenuDigital'
+import NuevaReservaHostelero from './NuevaReservaHostelero'
 
 const API = 'https://entreplazas-api.onrender.com/api'
 
