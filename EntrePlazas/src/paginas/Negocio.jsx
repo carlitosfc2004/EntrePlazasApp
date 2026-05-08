@@ -191,16 +191,16 @@ export default function Negocio() {
 
   const mesasLibres = turnoSeleccionado ? mesas.filter(m => !mesasOcupadas.includes(m.id)).length : mesas.length
 
+  const ahora = new Date()
+  const horaActual = ahora.getHours() * 60 + ahora.getMinutes()
+  const hoy = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0]
+  const maxFecha = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+
   const horasDisponibles = turnoSeleccionado ? generarHoras(turnoSeleccionado.horaInicio, turnoSeleccionado.horaFin).filter(h => {
     if (fecha !== hoy) return true
     const [hh, mm] = h.split(':').map(Number)
     return (hh * 60 + mm) > horaActual
   }) : []
-
-  const ahora = new Date()
-  const horaActual = ahora.getHours() * 60 + ahora.getMinutes()
-  const hoy = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0]
-  const maxFecha = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
 
   const fechaBloqueada = (f) => diasBloqueados.includes(f)
 
