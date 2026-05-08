@@ -215,7 +215,8 @@ export default function Negocio() {
 
       if (esHoy) {
         const [hF, mF] = t.horaFin.split(':').map(Number)
-        const minutosFinTurno = hF * 60 + mF
+        let minutosFinTurno = hF * 60 + mF
+        if (minutosFinTurno === 0) minutosFinTurno = 1440 // 00:00 del día siguiente se considera fin a las 24:00 del día actual
         if (minutosFinTurno <= horaActual) return false
       }
 
