@@ -1,6 +1,8 @@
 const express = require('express')
 const cors = require('cors')
 require('dotenv').config()
+const session = require('express-session')
+const passport = require('./config/passport')
 const { PrismaClient } = require('@prisma/client')
 
 const prisma = new PrismaClient()
@@ -24,6 +26,14 @@ const app = express()
 
 app.use(cors())
 app.use(express.json())
+
+app.use(session({
+  secret: process.env.JWT_SECRET,
+  resave: false,
+  saveUninitialized: false
+}))
+app.use(passport.initialize())
+app.use(passport.session())
 
 app.use('/api/auth', authRoutes)
 app.use('/api/negocios', negociosRoutes)
