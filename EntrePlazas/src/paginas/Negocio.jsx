@@ -197,7 +197,7 @@ export default function Negocio() {
     ? generarHoras(turnoSeleccionado.horaInicio, turnoSeleccionado.horaFin)
     : []
 
-  const hoy = new Date().toISOString().split('T')[0]
+  const hoy = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0]
   const maxFecha = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
 
   const fechaBloqueada = (f) => diasBloqueados.includes(f)

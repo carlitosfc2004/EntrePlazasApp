@@ -8,7 +8,7 @@ export default function NuevaReservaHostelero({ negocio, token, onCreada }) {
     const [form, setForm] = useState({
         mesaId: '',
         turnoId: '',
-        fecha: new Date().toISOString().split('T')[0],
+        fecha: new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0],
         horaInicio: '',
         nombreContacto: '',
         telefono: '',
@@ -53,7 +53,7 @@ export default function NuevaReservaHostelero({ negocio, token, onCreada }) {
             setExito(true)
             setForm({
                 mesaId: '', turnoId: '',
-                fecha: new Date().toISOString().split('T')[0],
+                fecha: new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0],
                 horaInicio: '', nombreContacto: '', telefono: '', numPersonas: 1
             })
             onCreada()
