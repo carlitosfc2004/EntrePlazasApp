@@ -47,7 +47,8 @@ export default function NuevaReservaHostelero({ negocio, token, onCreada }) {
                 nombreContacto: form.nombreContacto,
                 telefono: form.telefono,
                 numPersonas: parseInt(form.numPersonas),
-                turnoId: parseInt(form.turnoId)
+                turnoId: parseInt(form.turnoId),
+                estado: 'CONFIRMADA',
             }, { headers })
             setExito(true)
             setForm({
@@ -106,14 +107,14 @@ export default function NuevaReservaHostelero({ negocio, token, onCreada }) {
                             <div className="campo">
                                 <label>Fecha</label>
                                 <input type="date" value={form.fecha}
-                                min={new Date().toISOString().split('T')[0]}
-                                onChange={e => setForm({ ...form, fecha: e.target.value })}
-                                required />
+                                    min={new Date().toISOString().split('T')[0]}
+                                    onChange={e => setForm({ ...form, fecha: e.target.value })}
+                                    required />
                             </div>
                             <div className="campo">
                                 <label>Turno</label>
                                 <select value={form.turnoId}
-                                    onChange={e => setForm({ ...form, turnoId: e.target.value })}
+                                    onChange={e => setForm({ ...form, turnoId: e.target.value, horaInicio: '' })}
                                     required
                                     style={{ background: 'var(--gris-medio)', border: '1px solid var(--gris-borde)', borderRadius: 'var(--radio)', padding: '14px 16px', fontSize: '15px', color: 'var(--blanco)', width: '100%' }}>
                                     <option value="">Selecciona turno</option>
@@ -123,7 +124,20 @@ export default function NuevaReservaHostelero({ negocio, token, onCreada }) {
                                 </select>
                             </div>
                         </div>
+
                         <div className="campo-grid">
+                            <div className="campo">
+                                <label>Mesa</label>
+                                <select value={form.mesaId}
+                                    onChange={e => setForm({ ...form, mesaId: e.target.value })}
+                                    required
+                                    style={{ background: 'var(--gris-medio)', border: '1px solid var(--gris-borde)', borderRadius: 'var(--radio)', padding: '14px 16px', fontSize: '15px', color: 'var(--blanco)', width: '100%' }}>
+                                    <option value="">Selecciona mesa</option>
+                                    {mesas.map(m => (
+                                        <option key={m.id} value={m.id}>{m.etiqueta} ({m.capacidad} personas)</option>
+                                    ))}
+                                </select>
+                            </div>
                             <div className="campo">
                                 <label>Hora de llegada</label>
                                 <select
@@ -135,14 +149,15 @@ export default function NuevaReservaHostelero({ negocio, token, onCreada }) {
                                 >
                                     <option value="">Selecciona hora</option>
                                     {form.turnoId && (() => {
-                                        const turno = turnos.find(t => t.id === parseInt(form.turnoId))
-                                        return turno ? generarHoras(turno.horaInicio, turno.horaFin).map(h => (
-                                            <option key={h} value={h}>{h}</option>
-                                        )) : null
+                                    const turno = turnos.find(t => t.id === parseInt(form.turnoId))
+                                    return turno ? generarHoras(turno.horaInicio, turno.horaFin).map(h => (
+                                        <option key={h} value={h}>{h}</option>
+                                    )) : null
                                     })()}
                                 </select>
                             </div>
                         </div>
+
                         <div className="campo">
                             <label>Nombre del cliente</label>
                             <input type="text" placeholder="Nombre de contacto"
@@ -150,25 +165,27 @@ export default function NuevaReservaHostelero({ negocio, token, onCreada }) {
                             onChange={e => setForm({ ...form, nombreContacto: e.target.value })}
                             required />
                         </div>
+
                         <div className="campo-grid">
                             <div className="campo">
                                 <label>Teléfono</label>
                                 <input type="tel" placeholder="666 123 456"
-                                value={form.telefono}
-                                onChange={e => setForm({ ...form, telefono: e.target.value })} />
+                                    value={form.telefono}
+                                    onChange={e => setForm({ ...form, telefono: e.target.value })} />
                             </div>
                             <div className="campo">
                                 <label>Nº personas</label>
                                 <input type="number" min="1" max="30"
-                                value={form.numPersonas}
-                                onChange={e => setForm({ ...form, numPersonas: e.target.value })}
-                                required />
+                                    value={form.numPersonas}
+                                    onChange={e => setForm({ ...form, numPersonas: e.target.value })}
+                                    required />
                             </div>
                         </div>
+
                         <button type="submit" className="btn-principal" disabled={guardando}>
                             {guardando ? 'Creando...' : 'Crear reserva'}
                         </button>
-                    </form> 
+                    </form>
                 </div>
             </div>
         </div>
