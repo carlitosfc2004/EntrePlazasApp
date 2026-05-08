@@ -189,14 +189,16 @@ export default function Negocio() {
     <div><Navbar /><div className="negocio-loading">Negocio no encontrado</div></div>
   )
 
-  const mesasLibres = turnoSeleccionado
-    ? mesas.filter(m => !mesasOcupadas.includes(m.id)).length
-    : mesas.length
+  const mesasLibres = turnoSeleccionado ? mesas.filter(m => !mesasOcupadas.includes(m.id)).length : mesas.length
 
-  const horasDisponibles = turnoSeleccionado
-    ? generarHoras(turnoSeleccionado.horaInicio, turnoSeleccionado.horaFin)
-    : []
+  const horasDisponibles = turnoSeleccionado ? generarHoras(turnoSeleccionado.horaInicio, turnoSeleccionado.horaFin).filter(h => {
+    if (fecha !== hoy) return true
+    const [hh, mm] = h.split(':').map(Number)
+    return (hh * 60 + mm) > horaActual
+  }) : []
 
+  const ahora = new Date()
+  const horaActual = ahora.getHours() * 60 + ahora.getMinutes()
   const hoy = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0]
   const maxFecha = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
 
@@ -205,9 +207,19 @@ export default function Negocio() {
   const turnosFiltrados = (() => {
     if (!fecha) return turnos
     const diaSemana = new Date(fecha + 'T00:00:00').getDay().toString()
+    const esHoy = fecha === hoy
+
     return turnos.filter(t => {
       const dias = t.diasSemana ? t.diasSemana.split(',') : ['0','1','2','3','4','5','6']
-      return dias.includes(diaSemana)
+      if (!dias.includes(diaSemana)) return false
+
+      if (esHoy) {
+        const [hF, mF] = t.horaFin.split(':').map(Number)
+        const minutosFinTurno = hF * 60 + mF
+        if (minutosFinTurno <= horaActual) return false
+      }
+
+      return true
     })
   })()
   return (
