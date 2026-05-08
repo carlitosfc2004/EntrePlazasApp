@@ -195,6 +195,14 @@ export default function Dashboard() {
             <i className="bi bi-journal-text nav-icono"></i> Mi menú
           </button>
 
+          {/*Crear una resrva manualmente*/}
+          <button
+            className={`nav-item ${vistaActiva === 'nueva-reserva' ? 'activo' : ''}`}
+            onClick={() => setVistaActiva('nueva-reserva')}
+          >
+            <i className="bi bi-calendar-plus nav-icono"></i> Nueva reserva
+          </button>
+
           {/* Pestaña Mi negocio */}
           <button
             className={`nav-item ${vistaActiva === 'negocio' ? 'activo' : ''}`}
@@ -286,6 +294,12 @@ export default function Dashboard() {
         {vistaActiva === 'negocio' && (
           <div className="dash-contenido">
             <MiNegocio negocio={negocio} token={token} onActualizar={cargarNegocio} />
+          </div>
+        )}
+
+        {vistaActiva === 'nueva-reserva' && (
+          <div className="dash-contenido">
+            <NuevaReservaHostelero negocio={negocio} token={token} onCreada={cargarNegocio} />
           </div>
         )}
       </main>
