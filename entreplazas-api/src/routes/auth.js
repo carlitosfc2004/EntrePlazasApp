@@ -4,7 +4,6 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const prisma = require('../prisma')
 const passport = require('../config/passport')
-const jwt = require('jsonwebtoken')
 
 // Registro
 router.post('/registro', async (req, res) => {
