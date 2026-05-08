@@ -139,7 +139,7 @@ export default function Negocio() {
   }
 
   const usuario = JSON.parse(localStorage.getItem('ep_cliente_usuario') || '{}')
-  
+
   const seleccionarMesa = (mesa) => {
     if (!token) { navigate('/login'); return }
     if (!turnoSeleccionado) { alert('Selecciona primero un turno'); return }
@@ -362,6 +362,16 @@ export default function Negocio() {
             </>
           )}
         </div>}
+
+        {negocio.telefono && (
+          <div className="llamar-aviso">
+            <i className="bi bi-people-fill"></i>
+            <div>
+              <span className="llamar-titulo">¿Sois muchas personas?</span>
+              <span className="llamar-texto">Llama al <a href={`tel:${negocio.telefono}`} className="llamar-tel">{negocio.telefono}</a> y pregunta disponibilidad</span>
+            </div>
+          </div>
+        )}
 
         {vistaActiva === 'menu' && (
           <div className="menu-cliente">
