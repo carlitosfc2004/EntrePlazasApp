@@ -79,7 +79,10 @@ router.get('/google/hostelero', (req, res, next) => {
 
 // Callback de Google
 router.get('/google/callback',
-  passport.authenticate('google', { failureRedirect: '/login', session: false }),
+  passport.authenticate('google', { 
+    failureRedirect: `${process.env.FRONTEND_EMPRESA_URL}/login`,
+    session: false 
+  }),
   (req, res) => {
     const usuario = req.user
     const token = jwt.sign(
