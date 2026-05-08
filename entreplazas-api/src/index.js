@@ -21,6 +21,7 @@ const turnosRoutes = require('./routes/turnos')
 const diasBloqueadosRoutes = require('./routes/diasBloqueados')
 const menusRoutes = require('./routes/menus')
 const platosRoutes = require('./routes/platos')
+const usuariosRoutes = require('./routes/usuarios')
 
 const app = express()
 
@@ -44,6 +45,7 @@ app.use('/api/turnos', turnosRoutes)
 app.use('/api/dias-bloqueados', diasBloqueadosRoutes)
 app.use('/api/menus', menusRoutes)
 app.use('/api/platos', platosRoutes)
+app.use('/api/usuarios', usuariosRoutes)
 
 app.get('/', (req, res) => {
   res.json({ mensaje: 'API EntrePlazas funcionando' })

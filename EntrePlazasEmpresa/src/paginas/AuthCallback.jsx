@@ -10,9 +10,15 @@ export default function AuthCallback() {
         const usuario = params.get('usuario')
 
         if (token && usuario) {
-            localStorage.setItem('ep_token', token)
-            localStorage.setItem('ep_usuario', usuario)
+        const usuarioObj = JSON.parse(decodeURIComponent(usuario))
+        localStorage.setItem('ep_token', token)
+        localStorage.setItem('ep_usuario', JSON.stringify(usuarioObj))
+        
+        if (!usuarioObj.telefono) {
+            navigate('/completar-perfil')
+        } else {
             navigate('/dashboard')
+        }
         } else {
             navigate('/login')
         }

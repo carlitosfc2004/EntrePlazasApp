@@ -94,7 +94,8 @@ router.get('/google/callback',
     const usuarioData = encodeURIComponent(JSON.stringify({
       id: usuario.id,
       nombre: usuario.nombre,
-      rol: usuario.rol
+      rol: usuario.rol,
+      telefono: usuario.telefono || null
     }))
 
     if (usuario.rol === 'HOSTELERO') {
