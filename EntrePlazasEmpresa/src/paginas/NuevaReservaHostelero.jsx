@@ -125,12 +125,6 @@ export default function NuevaReservaHostelero({ negocio, token, onCreada }) {
                         </div>
                         <div className="campo-grid">
                             <div className="campo">
-                                <label>Teléfono</label>
-                                <input type="tel" placeholder="666 123 456"
-                                value={form.telefono}
-                                onChange={e => setForm({ ...form, telefono: e.target.value })} />
-                            </div>
-                            <div className="campo">
                                 <label>Hora de llegada</label>
                                 <select
                                     value={form.horaInicio}
