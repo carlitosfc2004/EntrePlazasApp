@@ -72,6 +72,7 @@ model Reserva {
   estado         EstadoReserva @default(PENDIENTE)
   createdAt      DateTime      @default(now())
   turnoId        Int?
+  telefono       String?
 }
 
 model Menu {

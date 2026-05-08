@@ -144,8 +144,9 @@ export default function Negocio() {
     setMesaSeleccionada(mesa)
     setFormReserva({
       horaInicio: generarHoras(turnoSeleccionado.horaInicio, turnoSeleccionado.horaFin)[0] || '',
-      nombreContacto: '',
-      numPersonas: 1
+      nombreContacto: usuario.nombre || '',
+      telefono: usuario.telefono || '',
+      numPersonas: 1,
     })
     setMostrarModal(true)
   }
@@ -425,6 +426,16 @@ export default function Negocio() {
                       placeholder="Tu nombre"
                       value={formReserva.nombreContacto}
                       onChange={e => setFormReserva({ ...formReserva, nombreContacto: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="campo">
+                    <label>Teléfono de contacto</label>
+                    <input
+                      type="tel"
+                      placeholder="666 123 456"
+                      value={formReserva.telefono}
+                      onChange={e => setFormReserva({ ...formReserva, telefono: e.target.value })}
                       required
                     />
                   </div>

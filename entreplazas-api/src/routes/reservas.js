@@ -25,7 +25,7 @@ router.get('/disponibilidad/:negocioId/:fecha/:turnoId', async (req, res) => {
 
 // Crear reserva (usuario logueado)
 router.post('/', verificarToken, async (req, res) => {
-  const { mesaId, negocioId, fecha, horaInicio, nombreContacto, numPersonas, turnoId } = req.body
+  const { mesaId, negocioId, fecha, horaInicio, nombreContacto, numPersonas, turnoId, telefono } = req.body
   try {
     const reservaExistente = await prisma.reserva.findFirst({
       where: {
@@ -48,7 +48,8 @@ router.post('/', verificarToken, async (req, res) => {
         horaInicio,
         nombreContacto,
         numPersonas: parseInt(numPersonas),
-        turnoId: parseInt(turnoId)
+        turnoId: parseInt(turnoId),
+        telefono: telefono || null
       }
     })
     res.status(201).json(reserva)
