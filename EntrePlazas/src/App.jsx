@@ -4,6 +4,7 @@ import Negocio from './paginas/Negocio'
 import Login from './paginas/Login'
 import MisReservas from './paginas/MisReservas'
 import './App.css'
+import AuthCallback from './paginas/AuthCallback'
 
 const RutaPrivada = ({ children }) => {
   const token = localStorage.getItem('ep_cliente_token')
@@ -23,6 +24,7 @@ function App() {
           </RutaPrivada>
         } />
         <Route path="*" element={<Navigate to="/" />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
       </Routes>
     </BrowserRouter>
   )

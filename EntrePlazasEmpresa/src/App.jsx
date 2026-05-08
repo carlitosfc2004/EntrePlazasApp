@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Login from './paginas/Login'
 import Dashboard from './paginas/Dashboard'
 import './App.css'
+import AuthCallback from './paginas/AuthCallback'
 
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('ep_token')
@@ -19,6 +20,7 @@ function App() {
           </PrivateRoute>
         } />
         <Route path="*" element={<Navigate to="/login" />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
       </Routes>
     </BrowserRouter>
   )

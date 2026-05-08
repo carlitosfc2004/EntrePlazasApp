@@ -62,3 +62,42 @@
     font-size: 14px;
     color: var(--acento);
 }
+
+.separador {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--gris-texto);
+    font-size: 13px;
+}
+
+.separador::before,
+.separador::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--gris-borde);
+}
+
+.btn-google {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 13px;
+    border-radius: var(--radio);
+    border: 1px solid var(--gris-borde);
+    background: var(--gris-medio);
+    color: var(--blanco);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    font-family: var(--font-body);
+}
+
+.btn-google:hover {
+    border-color: #4285F4;
+    background: rgba(66, 133, 244, 0.08);
+}
