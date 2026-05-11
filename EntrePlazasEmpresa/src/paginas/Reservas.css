@@ -113,10 +113,17 @@
 }
 
 .fila-cliente {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.fila-cliente div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  justify-content: center;
 }
 
 .fila-mesa {
