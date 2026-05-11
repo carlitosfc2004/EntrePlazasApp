@@ -165,7 +165,10 @@ export default function Reservas({ negocioId, token }) {
                       <div key={r.id} className="tabla-fila">
                         <span className="fila-cliente">
                           <i className="bi bi-person-circle"></i>
-                          {r.nombreContacto || r.usuario?.nombre || '—'}
+                          <div>
+                            <span>{r.nombreContacto || r.usuario?.nombre || '—'}</span>
+                            {r.telefono && <span style={{ fontSize: '12px', color: 'var(--gris-texto)', display: 'block' }}><i className="bi bi-telephone"></i> {r.telefono}</span>}
+                          </div>
                         </span>
                         <span className="fila-mesa">
                           <i className="bi bi-grid-3x3"></i>
