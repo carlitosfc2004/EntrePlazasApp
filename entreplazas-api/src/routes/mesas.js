@@ -23,7 +23,7 @@ router.post('/', verificarToken, async (req, res) => {
   if (req.usuario.rol !== 'HOSTELERO') {
     return res.status(403).json({ error: 'Solo los hosteleros pueden crear mesas' })
   }
-  const { negocioId, etiqueta, capacidad, posX, posY, ancho, alto } = req.body
+  const { negocioId, etiqueta, capacidad, posX, posY, ancho, alto, forma } = req.body
   try {
     const mesa = await prisma.mesa.create({
       data: {
@@ -33,7 +33,8 @@ router.post('/', verificarToken, async (req, res) => {
         posX: posX || 0,
         posY: posY || 0,
         ancho: ancho || 80,
-        alto: alto || 80
+        alto: alto || 80,
+        forma: forma || 'cuadrado',
       }
     })
     res.status(201).json(mesa)

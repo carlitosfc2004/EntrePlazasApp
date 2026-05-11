@@ -181,7 +181,7 @@ export default function PlanoMesas({ negocioId, token }) {
         axios.get(`${API}/mesas/negocio/${negocioId}`),
         axios.get(`${API}/paredes/negocio/${negocioId}`)
       ])
-      setMesas(mesasRes.data.map(m => ({ ...m, forma: m.forma || 'cuadrado' })))
+      setMesas(mesasRes.data)
       setParedes(paredesRes.data)
     } catch {
       console.error('Error cargando datos')
@@ -220,7 +220,8 @@ export default function PlanoMesas({ negocioId, token }) {
         capacidad: parseInt(formNueva.capacidad),
         posX: 40 + (mesas.length % 6) * 160,
         posY: 40 + Math.floor(mesas.length / 6) * 160,
-        ancho, alto: tamaño.alto
+        ancho, alto: tamaño.alto,
+        forma: formNueva.forma
       }, { headers })
       setMesas(prev => [...prev, { ...data, forma: formNueva.forma }])
       setFormNueva({ etiqueta: '', capacidad: 4, forma: 'cuadrado', tamaño: 'mediana' })

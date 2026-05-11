@@ -54,6 +54,7 @@ model Mesa {
   ancho     Int       @default(80)
   alto      Int       @default(80)
   activa    Boolean   @default(true)
+  forma     String    @default("cuadrado")
   reservas  Reserva[]
 }
 
