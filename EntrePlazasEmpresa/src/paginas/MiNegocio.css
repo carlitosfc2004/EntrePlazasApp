@@ -16,6 +16,7 @@
     border: 1px solid var(--gris-borde);
     border-radius: var(--radio-lg);
     padding: 28px;
+    box-shadow: 0 2px 12px rgba(26, 44, 78, 0.07);
 }
 
 .card-titulo {
@@ -41,7 +42,7 @@
 
 textarea {
     font-family: var(--font-body);
-    background: var(--gris-medio);
+    background: var(--gris-oscuro);
     border: 1px solid var(--gris-borde);
     border-radius: var(--radio);
     padding: 14px 16px;
@@ -49,16 +50,17 @@ textarea {
     color: var(--blanco);
     resize: vertical;
     width: 100%;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 textarea:focus {
     outline: none;
     border-color: var(--acento);
+    box-shadow: 0 0 0 3px rgba(232, 86, 42, 0.10);
 }
 
 textarea::placeholder {
-    color: #444;
+    color: #b0a898;
 }
 
 .exito-msg {
@@ -180,7 +182,7 @@ textarea::placeholder {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: var(--gris-medio);
+    background: var(--gris-oscuro);
     border: 1px solid var(--gris-borde);
     color: var(--blanco);
     padding: 10px 16px;
@@ -188,17 +190,19 @@ textarea::placeholder {
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
     font-family: var(--font-body);
+    box-shadow: 0 1px 4px rgba(26, 44, 78, 0.06);
 }
 
-.btn-subir-imagen:hover { 
-    border-color: var(--acento); 
+.btn-subir-imagen:hover {
+    border-color: var(--acento);
+    box-shadow: 0 2px 8px rgba(232, 86, 42, 0.12);
 }
 
 .imagen-hint {
     font-size: 12px;
-    color: #555;
+    color: var(--gris-texto);
 }
 
 .turnos-vacio {

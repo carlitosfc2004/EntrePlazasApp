@@ -5,22 +5,22 @@
 }
 
 :root {
-  --negro: #0a0a0a;
-  --gris-oscuro: #141414;
-  --gris-medio: #1e1e1e;
-  --gris-borde: #2a2a2a;
-  --gris-texto: #888;
-  --blanco: #ffffff;
-  --blanco-suave: #f5f5f0;
+  --negro: #f5f2ee;
+  --gris-oscuro: #ffffff;
+  --gris-medio: #f0ece7;
+  --gris-borde: #ddd5c9;
+  --gris-texto: #6b7280;
+  --blanco: #1a2c4e;
+  --blanco-suave: #f8f6f3;
   --acento: #e8562a;
   --acento-hover: #d14520;
-  --acento-suave: rgba(232, 86, 42, 0.12);
-  --verde: #22c55e;
+  --acento-suave: rgba(232, 86, 42, 0.10);
+  --verde: #16a34a;
   --font-display: 'Playfair Display', Georgia, serif;
   --font-body: 'DM Sans', sans-serif;
   --radio: 12px;
   --radio-lg: 20px;
-  --sombra: 0 4px 24px rgba(0,0,0,0.4);
+  --sombra: 0 2px 16px rgba(26, 44, 78, 0.10);
 }
 
 body {
@@ -63,18 +63,19 @@ a { text-decoration: none; color: inherit; }
 }
 
 .campo input, .campo select {
-  background: var(--gris-medio);
+  background: var(--gris-oscuro);
   border: 1px solid var(--gris-borde);
   border-radius: var(--radio);
   padding: 14px 16px;
   font-size: 15px;
   color: var(--blanco);
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
   width: 100%;
 }
 
 .campo input:focus, .campo select:focus {
   border-color: var(--acento);
+  box-shadow: 0 0 0 3px rgba(232, 86, 42, 0.10);
 }
 
-.campo input::placeholder { color: #444; }
+.campo input::placeholder { color: #b0a898; }
