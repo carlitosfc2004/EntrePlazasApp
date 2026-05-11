@@ -16,6 +16,9 @@ export default function NuevaReservaHostelero({ negocio, token, onCreada }) {
     })
     const [exito, setExito] = useState(false)
     const [guardando, setGuardando] = useState(false)
+    const hoy = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0]
+    const ahora = new Date()
+    const horaActual = ahora.getHours() * 60 + ahora.getMinutes()
     const headers = { Authorization: `Bearer ${token}` }
 
     useEffect(() => {
@@ -118,9 +121,24 @@ export default function NuevaReservaHostelero({ negocio, token, onCreada }) {
                                     required
                                     style={{ background: 'var(--gris-medio)', border: '1px solid var(--gris-borde)', borderRadius: 'var(--radio)', padding: '14px 16px', fontSize: '15px', color: 'var(--blanco)', width: '100%' }}>
                                     <option value="">Selecciona turno</option>
-                                    {turnos.map(t => (
+                                    {turnos
+                                        .filter(t => {
+                                        if (!form.fecha) return true
+                                        const diaSemana = new Date(form.fecha + 'T00:00:00').getDay().toString()
+                                        const dias = t.diasSemana ? t.diasSemana.split(',') : ['0','1','2','3','4','5','6']
+                                        if (!dias.includes(diaSemana)) return false
+                                        if (form.fecha === hoy) {
+                                            const [hF, mF] = t.horaFin.split(':').map(Number)
+                                            let minutosFinTurno = hF * 60 + mF
+                                            if (minutosFinTurno === 0) minutosFinTurno = 1440
+                                            if (minutosFinTurno <= horaActual) return false
+                                        }
+                                        return true
+                                        })
+                                        .map(t => (
                                         <option key={t.id} value={t.id}>{t.nombre} ({t.horaInicio}-{t.horaFin})</option>
-                                    ))}
+                                        ))
+                                    }
                                 </select>
                             </div>
                         </div>
