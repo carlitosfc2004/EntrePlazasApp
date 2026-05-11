@@ -39,7 +39,7 @@ export default function MapaNegocio({ direccion, ciudad, nombre }) {
             zoom={16}
             style={{ height: '220px', width: '100%', borderRadius: '12px' }}
             zoomControl={false}
-            scrollWheelZoom={false}
+            scrollWheelZoom={true}
         >
         <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
