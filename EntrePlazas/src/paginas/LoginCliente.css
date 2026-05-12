@@ -23,6 +23,18 @@
     margin-bottom: 32px;
 }
 
+.login-cliente-root {
+    background: var(--negro);
+}
+
+.login-cliente-card {
+    background: var(--gris-oscuro);
+    border: 1px solid var(--gris-borde);
+    border-radius: var(--radio-lg);
+    padding: 36px;
+    box-shadow: 0 4px 24px rgba(26, 44, 78, 0.10);
+}
+
 .login-tabs {
     display: flex;
     background: var(--gris-medio);
@@ -88,16 +100,18 @@
     padding: 13px;
     border-radius: var(--radio);
     border: 1px solid var(--gris-borde);
-    background: var(--gris-medio);
+    background: var(--gris-oscuro);
     color: var(--blanco);
     font-size: 15px;
     font-weight: 500;
     cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
     font-family: var(--font-body);
+    box-shadow: 0 1px 4px rgba(26, 44, 78, 0.06);
 }
 
 .btn-google:hover {
     border-color: #4285F4;
-    background: rgba(66, 133, 244, 0.08);
+    background: rgba(66, 133, 244, 0.06);
+    box-shadow: 0 2px 8px rgba(66, 133, 244, 0.15);
 }
