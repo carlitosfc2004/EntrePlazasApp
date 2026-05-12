@@ -10,8 +10,6 @@ import NuevaReservaHostelero from './NuevaReservaHostelero'
 
 const API = 'https://entreplazas-api.onrender.com/api'
 
-const [reservasPendientes, setReservasPendientes] = useState(0)
-
 export default function Dashboard() {
   const navigate = useNavigate()
   const usuario = JSON.parse(localStorage.getItem('ep_usuario') || '{}')
@@ -20,6 +18,7 @@ export default function Dashboard() {
   const [cargando, setCargando] = useState(true)
   const [reservasHoy, setReservasHoy] = useState([])
   const [vistaActiva, setVistaActiva] = useState('inicio')
+  const [reservasPendientes, setReservasPendientes] = useState(0)
   const [formNegocio, setFormNegocio] = useState({
     nombre: '', descripcion: '', direccion: '',
     ciudad: '', telefono: '', horarioApertura: '', horarioCierre: ''
