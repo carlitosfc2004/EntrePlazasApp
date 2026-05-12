@@ -32,6 +32,7 @@
   border: 1px solid var(--gris-borde);
   border-radius: var(--radio-lg);
   padding: 24px;
+  box-shadow: 0 2px 12px rgba(26, 44, 78, 0.07);
 }
 
 .menu-card-header {
@@ -59,16 +60,18 @@
 }
 
 .plato-card {
-  background: var(--gris-medio);
+  background: var(--gris-oscuro);
   border: 1px solid var(--gris-borde);
   border-radius: var(--radio);
   overflow: hidden;
   position: relative;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(26, 44, 78, 0.06);
 }
 
 .plato-card:hover {
   border-color: var(--acento);
+  box-shadow: 0 4px 16px rgba(232, 86, 42, 0.12);
 }
 
 .plato-imagen {

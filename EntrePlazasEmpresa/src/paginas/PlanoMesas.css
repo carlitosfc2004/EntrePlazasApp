@@ -94,13 +94,15 @@
     border: 1px solid var(--gris-borde);
     background: var(--gris-oscuro);
     min-height: 650px;
+    box-shadow: 0 2px 12px rgba(26, 44, 78, 0.07);
   }
   
   .lienzo {
     width: 1400px;
     height: 900px;
     position: relative;
-    background-image: radial-gradient(circle, #2a2a2a 1px, transparent 1px);
+    background-color: #faf8f5;
+    background-image: radial-gradient(circle, #ddd5c9 1px, transparent 1px);
     background-size: 28px 28px;
   }
   
@@ -109,8 +111,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: var(--gris-medio);
-    border: 2px solid var(--gris-borde);
+    background: #f0faf4;
+    border: 2px solid var(--verde);
     transition: border-color 0.15s, box-shadow 0.15s;
     user-select: none;
     gap: 4px;
@@ -157,6 +159,7 @@
     flex-direction: column;
     gap: 16px;
     height: fit-content;
+    box-shadow: 0 2px 12px rgba(26, 44, 78, 0.08);
   }
   
   .panel-mesa-header {
@@ -220,6 +223,7 @@
     padding: 32px;
     width: 100%;
     max-width: 440px;
+    box-shadow: 0 8px 40px rgba(26, 44, 78, 0.18);
   }
   
   .modal-card h3 {

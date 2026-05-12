@@ -8,6 +8,8 @@
     height: 64px;
     background: var(--gris-oscuro);
     border-bottom: 1px solid var(--gris-borde);
+    border-top: 4px solid var(--acento);
+    box-shadow: 0 2px 12px rgba(26, 44, 78, 0.08);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -52,7 +54,7 @@
     transition: color 0.2s;
 }
 
-.navbar-link:hover { color: var(--blanco); }
+.navbar-link:hover { color: var(--acento); }
 
 .navbar-usuario {
     display: flex;
