@@ -294,3 +294,52 @@
     background: rgba(232, 86, 42, 0.12);
     color: var(--acento);
 }
+
+.badge-pendiente {
+    background: var(--acento);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 20px;
+    margin-left: auto;
+    min-width: 20px;
+    text-align: center;
+}
+
+.aviso-pendientes {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(232, 86, 42, 0.1);
+    border: 1px solid rgba(232, 86, 42, 0.3);
+    border-left: 4px solid var(--acento);
+    border-radius: var(--radio);
+    padding: 14px 20px;
+    margin-bottom: 24px;
+    animation: pulso 2s ease-in-out infinite;
+}
+
+.aviso-pendientes i {
+    color: var(--acento);
+    font-size: 18px;
+}
+
+.aviso-pendientes span {
+    flex: 1;
+    font-size: 14px;
+}
+
+.aviso-pendientes-btn {
+    background: var(--acento);
+    color: white;
+    padding: 8px 16px;
+    border-radius: var(--radio);
+    font-size: 13px;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.aviso-pendientes-btn:hover {
+    background: var(--acento-hover);
+}

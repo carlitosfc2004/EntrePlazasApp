@@ -18,6 +18,7 @@ export default function Dashboard() {
   const [cargando, setCargando] = useState(true)
   const [reservasHoy, setReservasHoy] = useState([])
   const [vistaActiva, setVistaActiva] = useState('inicio')
+  const [reservasPendientes, setReservasPendientes] = useState(0)
   const [formNegocio, setFormNegocio] = useState({
     nombre: '', descripcion: '', direccion: '',
     ciudad: '', telefono: '', horarioApertura: '', horarioCierre: ''
@@ -49,6 +50,8 @@ export default function Dashboard() {
         r.fecha.split('T')[0] === hoy && r.estado !== 'CANCELADA'
       )
       setReservasHoy(hoyReservas)
+      const pendientes = data.filter(r => r.estado === 'PENDIENTE').length
+      setReservasPendientes(pendientes)
     } catch {
       setReservasHoy([])
     }
@@ -186,6 +189,9 @@ export default function Dashboard() {
             onClick={() => setVistaActiva('reservas')}
           >
             <i className="bi bi-calendar-check nav-icono"></i> Reservas
+            {reservasPendientes > 0 && (
+              <span className="badge-pendiente">{reservasPendientes}</span>
+            )}
           </button>
 
           {/* Pestaña Mi menú */}
@@ -226,6 +232,15 @@ export default function Dashboard() {
                 <p className="dash-subtitulo">{negocio.nombre} · {negocio.ciudad}</p>
               </div>
             </div>
+            {reservasPendientes > 0 && (
+              <div className="aviso-pendientes">
+                <i className="bi bi-bell-fill"></i>
+                <span>Tienes <strong>{reservasPendientes}</strong> {reservasPendientes === 1 ? 'reserva pendiente' : 'reservas pendientes'} de confirmar</span>
+                <button className="aviso-pendientes-btn" onClick={() => setVistaActiva('reservas')}>
+                  Ver reservas
+                </button>
+              </div>
+            )}
             <div className="stats-grid">
               <div className="stat-card">
                 <span className="stat-card-num">{reservasHoy.length}</span>
