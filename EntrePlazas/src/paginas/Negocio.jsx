@@ -191,6 +191,7 @@ export default function Negocio() {
         fecha,
         horaInicio: formReserva.horaInicio,
         nombreContacto: formReserva.nombreContacto,
+        telefono: formReserva.telefono,
         numPersonas: formReserva.numPersonas,
         turnoId: turnoSeleccionado.id
       }, { headers: { Authorization: `Bearer ${token}` } })

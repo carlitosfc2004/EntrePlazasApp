@@ -193,7 +193,11 @@ export default function Reservas({ negocioId, token }) {
                           <i className="bi bi-person-circle"></i>
                           <div>
                             <span>{r.nombreContacto || r.usuario?.nombre || '—'}</span>
-                            {r.telefono && <span style={{ fontSize: '12px', color: 'var(--gris-texto)', display: 'block' }}><i className="bi bi-telephone"></i> {r.telefono}</span>}
+                            {(r.telefono || r.usuario?.telefono) && (
+                              <span style={{ fontSize: '12px', color: 'var(--gris-texto)', display: 'block' }}>
+                                <i className="bi bi-telephone"></i> {r.telefono || r.usuario?.telefono}
+                              </span>
+                            )}
                           </div>
                         </span>
                         <span className="fila-mesa">
