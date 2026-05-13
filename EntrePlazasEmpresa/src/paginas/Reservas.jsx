@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import API from '../config'
 import './Reservas.css'
 
 const ESTADOS = ['TODAS', 'PENDIENTE', 'CONFIRMADA', 'CANCELADA']
+const INTERVALO_REFRESCO = 15000
 
 export default function Reservas({ negocioId, token }) {
   const [reservas, setReservas] = useState([])
@@ -11,14 +12,30 @@ export default function Reservas({ negocioId, token }) {
   const [filtro, setFiltro] = useState('TODAS')
   const [busqueda, setBusqueda] = useState('')
   const [diaExpandido, setDiaExpandido] = useState(null)
+  const [ultimaActualizacion, setUltimaActualizacion] = useState(null)
   const headers = { Authorization: `Bearer ${token}` }
 
-  useEffect(() => { cargarReservas() }, [])
+  // Ref para el callback de polling — evita closures obsoletos
+  const pollRef = useRef(null)
+  pollRef.current = async () => {
+    try {
+      const { data } = await axios.get(`${API}/reservas/negocio/${negocioId}`, { headers })
+      setReservas(data)
+      setUltimaActualizacion(new Date())
+    } catch {}
+  }
+
+  useEffect(() => {
+    cargarReservas()
+    const intervalo = setInterval(() => pollRef.current(), INTERVALO_REFRESCO)
+    return () => clearInterval(intervalo)
+  }, [])
 
   const cargarReservas = async () => {
     try {
       const { data } = await axios.get(`${API}/reservas/negocio/${negocioId}`, { headers })
       setReservas(data)
+      setUltimaActualizacion(new Date())
       const hoy = new Date().toISOString().split('T')[0]
       setDiaExpandido(hoy)
     } catch {
@@ -93,6 +110,15 @@ export default function Reservas({ negocioId, token }) {
         <div>
           <h1>Reservas</h1>
           <p className="dash-subtitulo">{reservas.length} reservas en total</p>
+        </div>
+        <div className="reservas-live">
+          <span className="live-dot"></span>
+          En vivo
+          {ultimaActualizacion && (
+            <span className="live-hora">
+              · actualizado {ultimaActualizacion.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+            </span>
+          )}
         </div>
       </div>
 

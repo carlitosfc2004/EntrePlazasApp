@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Navbar from './Navbar'
@@ -71,12 +71,39 @@ export default function Negocio() {
   const [vistaActiva, setVistaActiva] = useState('plano') // 'plano' o 'menu'
   const token = localStorage.getItem('ep_cliente_token')
 
+  // Ref para evitar actualizar el plano mientras el modal de reserva está abierto
+  const mostrarModalRef = useRef(false)
+  useEffect(() => { mostrarModalRef.current = mostrarModal }, [mostrarModal])
+
+  // Ref con los parámetros actuales para el polling (evita closures obsoletos)
+  const pollParamsRef = useRef({ fecha, turnoId: null, negocioId: id })
+
   useEffect(() => { cargarNegocio() }, [id])
 
   useEffect(() => {
     if (negocio && turnoSeleccionado) cargarDisponibilidad()
     else setMesasOcupadas([])
   }, [fecha, turnoSeleccionado, negocio])
+
+  // Polling de disponibilidad — se activa cuando hay turno seleccionado
+  useEffect(() => {
+    if (!turnoSeleccionado || !negocio) return
+
+    pollParamsRef.current = { fecha, turnoId: turnoSeleccionado.id, negocioId: id }
+
+    const intervalo = setInterval(async () => {
+      if (mostrarModalRef.current) return // No actualizar mientras reservan
+      const { fecha: f, turnoId, negocioId } = pollParamsRef.current
+      try {
+        const { data } = await axios.get(
+          `${API}/reservas/disponibilidad/${negocioId}/${f}/${turnoId}`
+        )
+        setMesasOcupadas(data.mesasOcupadas || [])
+      } catch {}
+    }, 10000)
+
+    return () => clearInterval(intervalo)
+  }, [fecha, turnoSeleccionado?.id])
 
   {/* Carga toda la información del negocio: datos, mesas, paredes, turnos, días bloqueados y menús públicos */}
   const cargarNegocio = async () => {
@@ -132,7 +159,7 @@ export default function Negocio() {
         `${API}/reservas/disponibilidad/${id}/${fecha}/${turnoSeleccionado.id}`
       )
       setMesasOcupadas(data.mesasOcupadas || [])
-      setMesaSeleccionada(null)
+      setMesaSeleccionada(null) // Solo al cambiar fecha/turno manualmente
     } catch {
       console.error('Error cargando disponibilidad')
     }

@@ -4,6 +4,39 @@
     gap: 24px;
 }
 
+.reservas-live {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--verde);
+    background: rgba(22, 163, 74, 0.08);
+    border: 1px solid rgba(22, 163, 74, 0.20);
+    border-radius: 20px;
+    padding: 6px 14px;
+    white-space: nowrap;
+}
+
+.live-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--verde);
+    border-radius: 50%;
+    animation: pulso-live 1.8s ease-in-out infinite;
+    flex-shrink: 0;
+}
+
+@keyframes pulso-live {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.4); }
+    50% { opacity: 0.7; box-shadow: 0 0 0 5px rgba(22, 163, 74, 0); }
+}
+
+.live-hora {
+    color: var(--gris-texto);
+    font-weight: 400;
+}
+
 .reservas-loading {
     display: flex;
     align-items: center;
