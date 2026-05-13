@@ -34,6 +34,7 @@ body {
 button { font-family: var(--font-body); cursor: pointer; border: none; outline: none; }
 input { font-family: var(--font-body); outline: none; }
 a { text-decoration: none; color: inherit; }
+h1, h2, h3, h4, h5, h6 { color: var(--blanco); }
 
 .btn-principal {
   background: var(--acento);
