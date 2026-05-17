@@ -14,6 +14,22 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const usuario = JSON.parse(localStorage.getItem("ep_usuario") || "{}");
   const token = localStorage.getItem("ep_token");
+
+  useEffect(() => {
+    const interceptor = axios.interceptors.response.use(
+      res => res,
+      err => {
+        if (err.response?.status === 401 || err.response?.status === 403) {
+          localStorage.removeItem('ep_token')
+          localStorage.removeItem('ep_usuario')
+          navigate('/login')
+        }
+        return Promise.reject(err)
+      }
+    )
+    return () => axios.interceptors.response.eject(interceptor)
+  }, [navigate])
+
   const [negocio, setNegocio] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [reservasHoy, setReservasHoy] = useState([]);
