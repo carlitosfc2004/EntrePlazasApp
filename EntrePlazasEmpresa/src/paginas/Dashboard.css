@@ -162,6 +162,7 @@
 .dash-contenido {
     padding: 40px;
     max-width: 1000px;
+    margin: 0 auto;
 }
 
 .dash-header {
