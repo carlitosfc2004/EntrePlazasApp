@@ -27,8 +27,12 @@ export default function Dashboard() {
   const headers = { Authorization: `Bearer ${token}` }
 
   useEffect(() => {
-    cargarNegocio()
-  }, [])
+    if (!negocio) return
+    const intervalo = setInterval(() => {
+      cargarReservasHoy(negocio.id)
+    }, 5000) // cada 5 segundos
+    return () => clearInterval(intervalo)
+  }, [negocio])
 
   const cargarNegocio = async () => {
     try {
