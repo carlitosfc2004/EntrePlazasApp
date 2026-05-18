@@ -26,10 +26,6 @@ export default function Dashboard() {
 
   const headers = { Authorization: `Bearer ${token}` }
 
-  useEffect(() => {
-    cargarNegocio()
-  }, [])
-
   const cargarNegocio = async () => {
     try {
       const { data } = await axios.get(`${API}/negocios/mi/negocio`, { headers })
@@ -56,6 +52,18 @@ export default function Dashboard() {
       setReservasHoy([])
     }
   }
+
+  useEffect(() => {
+    if (!negocio) return
+    const intervalo = setInterval(() => {
+      cargarReservasHoy(negocio.id)
+    }, 5000)
+    return () => clearInterval(intervalo)
+  }, [negocio])
+
+  useEffect(() => {
+    cargarNegocio()
+  }, [])
 
   const crearNegocio = async e => {
     e.preventDefault()
