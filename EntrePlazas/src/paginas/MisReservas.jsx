@@ -122,6 +122,14 @@ export default function MisReservas() {
 }
 
 function TarjetaReserva({ reserva: r, onCancelar, formatFecha, proxima }) {
+  
+  const puedeCancelar = () => {
+    const fechaReserva = new Date(r.fecha)
+    const ahora = new Date()
+    const diferenciaHoras = (fechaReserva - ahora) / (1000 * 60 * 60)
+    return diferenciaHoras >= 24
+  }
+
   return (
     <div className={`reserva-tarjeta ${!proxima ? 'pasada' : ''}`}>
       <div className="reserva-tarjeta-izq">
@@ -147,9 +155,13 @@ function TarjetaReserva({ reserva: r, onCancelar, formatFecha, proxima }) {
            r.estado === 'CONFIRMADA' ? 'Confirmada' : 'Cancelada'}
         </span>
         {proxima && r.estado !== 'CANCELADA' && (
-          <button className="btn-cancelar-reserva" onClick={() => onCancelar(r.id)}>
-            <i className="bi bi-x-circle"></i> Cancelar
-          </button>
+          puedeCancelar() ? (
+            <button className="btn-cancelar-reserva" onClick={() => onCancelar(r.id)}>
+              <i className="bi bi-x-circle"></i> Cancelar
+            </button>
+          ) : (
+            <span className="no-cancelable">No cancelable (menos de 24h)</span>
+          )
         )}
       </div>
     </div>
