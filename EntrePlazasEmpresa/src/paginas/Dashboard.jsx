@@ -26,6 +26,10 @@ export default function Dashboard() {
 
   const headers = { Authorization: `Bearer ${token}` }
 
+  useEffect(() => {
+    cargarNegocio()
+  }, [])
+
   const cargarNegocio = async () => {
     try {
       const { data } = await axios.get(`${API}/negocios/mi/negocio`, { headers })
@@ -37,14 +41,6 @@ export default function Dashboard() {
       setCargando(false)
     }
   }
-
-  useEffect(() => {
-    if (!negocio) return
-    const intervalo = setInterval(() => {
-      cargarReservasHoy(negocio.id)
-    }, 5000) // cada 5 segundos
-    return () => clearInterval(intervalo)
-  }, [negocio])
 
   const cargarReservasHoy = async (negocioId) => {
     try {
